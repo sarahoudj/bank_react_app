@@ -1,0 +1,108 @@
+/* ReglementationPage.css */
+
+/* Container principal */
+.reglementation-container {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+    padding: 50px;
+    min-height: 100vh;
+    color: #333;
+  }
+  
+  /* Titre principal */
+  .reglementation-title {
+    text-align: center;
+    font-size: 3em;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 10px;
+  }
+  
+  /* Sections */
+  .reglementation-section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-bottom: 40px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .reglementation-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Titre de section */
+  .section-title {
+    font-size: 2.5em;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  /* Règles */
+  .reglementation-rule {
+    margin-bottom: 20px;
+  }
+  
+  .rule-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #0b5f97;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+  }
+  
+  .rule-title:hover {
+    color: #3498db;
+  }
+  
+  .rule-description {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #555;
+    margin-left: 0;
+    padding-left: 0;
+    /* Suppression de la bordure à gauche */
+  }
+  
+  .reglementation-rule p {
+    margin: 10px 0;
+  }
+  
+  /* Animation de hover pour les sections */
+  .reglementation-section:hover .rule-title {
+    color: #2980b9;
+  }
+  
+  .reglementation-section:hover .rule-description {
+    color: #3498db;
+  }
+  
+  /* Adaptabilité */
+  @media screen and (max-width: 768px) {
+    .reglementation-container {
+      padding: 20px;
+    }
+  
+    .reglementation-title {
+      font-size: 2.5em;
+    }
+  
+    .section-title {
+      font-size: 2em;
+    }
+  
+    .rule-title {
+      font-size: 1.1em;
+    }
+  
+    .rule-description {
+      font-size: 1em;
+    }
+  }

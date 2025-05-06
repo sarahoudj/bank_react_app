@@ -1,0 +1,156 @@
+/* EncaissementPage.css */
+.encaissement-page {
+    padding: 2rem 1.5rem;
+    background: linear-gradient(135deg, #f8f9ff 0%, #f1f3fa 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    color: #2c3e50;
+    text-align: center;
+    
+  }
+  .page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .page-title {
+    
+    text-align: center;
+    font-size: 3em;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  
+  /* Ligne bleue */
+  .header-underline {
+    width: 1000%; /* Ajuste ici la longueur (ex : 60% ou 500px) */
+    max-width: 1000px;
+    height: 4px;
+    background-color:#3498db;
+    border-radius: 1px;
+  }
+  
+  
+  
+  .generate-btn {
+    align-self: center;
+    padding: 0.8rem 2rem;
+    background: linear-gradient(135deg, #2a5af9 0%, #65a2ed 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
+  }
+  
+  .generate-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2);
+  }
+  
+  .btn-icon {
+    font-size: 1.2rem;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    padding: 1rem 0;
+  }
+  
+  .financial-table {
+    min-width: 900px;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+  }
+  
+  .table-header {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(120px, 1fr));
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 0.5rem;
+  }
+  
+  .header-cell {
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .table-row {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(120px, 1fr));
+    padding: 1rem;
+    background-color: white;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    margin-bottom: 0.5rem;
+  }
+  
+  .table-row:hover {
+    background-color: #f8f9ff;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
+  }
+  
+  .data-cell {
+    font-size: 0.95rem;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+  }
+  
+  .currency-cell {
+    font-weight: 600;
+    color: #73a5f0;
+  }
+  
+  .highlight-cell {
+    color: #74a1f5;
+    font-weight: 500;
+  }
+  
+  .even-row {
+    background-color: #fafbff;
+  }
+  
+  .odd-row {
+    background-color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .encaissement-page {
+      padding: 1.5rem 1rem;
+    }
+  
+    .page-title {
+      font-size: 1.6rem;
+    }
+  
+    .generate-btn {
+      padding: 0.7rem 1.5rem;
+      font-size: 0.9rem;
+    }
+  
+    .data-cell {
+      font-size: 0.85rem;
+    }
+  }

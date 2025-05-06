@@ -1,0 +1,76 @@
+.footer {
+    background: #1c3d5a;
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: auto;
+    padding-bottom: 20px;
+    position: relative;
+}
+
+/* Logo + Nom du site */
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacement entre le logo et le nom */
+}
+
+.footer-logo {
+    width: 50px;
+    height: auto;
+}
+
+.footer-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Description */
+.footer-description {
+    font-size: 0.9rem;
+    color: #ddd;
+    max-width: 250px;
+    margin-top: 5px;
+}
+
+/* Ligne verticale entre les sections */
+.footer-divider {
+    width: 2px;
+    height: 80px;
+    background: white;
+    opacity: 0.5;
+}
+
+/* Section droite : Liens */
+/* Section droite : Liens */
+.footer-right {
+    text-align: left;
+    margin-left: -80px; /* Déplacement plus à gauche */
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #d4335e;
+}
