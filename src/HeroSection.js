@@ -9,7 +9,7 @@ const HeroSection = () => {
       <nav className="navbar">
         {/* Logo à gauche */}
         <div className="logo-container">
-          <img src="imag.jpg" alt="Logo" className="logo" />
+          <img src="bank.png" alt="Logo" className="logo" />
           <span className="logo-text">BA</span>
         </div>
 
@@ -19,9 +19,20 @@ const HeroSection = () => {
         <li><Link smooth to="#">Home</Link></li>
         
         {/*<li><Link smooth to="#about">About Us</Link></li>*/}
-        <li><Link smooth to="#services">Services</Link></li>
+        <li><Link smooth to="#services">operation de changes 
+        
+        
+        
+        
+        
+        
+        
+        </Link></li>
         <li><Link to="/reglementation"> La réglementation</Link></li>
         < li><Link to="/encaissement"> l'encaissement</Link></li>
+      
+        < li><Link to="/cotation"> Cotation</Link></li>
+      
       </ul> 
       
        {/* Bouton Sign In */}

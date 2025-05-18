@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { Bell, User, Menu, DollarSign, CreditCard, Calendar, ChevronRight, CheckCircle, X } from 'lucide-react';
 import './SoinsPage.css'; // Importez le fichier CSS
 
@@ -13,7 +13,9 @@ const SoinsPage = () => {
   const [paysDestination, setPaysDestination] = useState('');
   const [bareme, setBareme] = useState(''); 
   const [devise, setDevise] = useState('');
-  const [frais, setFrais] = useState('non');
+  const [date, setDate ] = useState('');
+  const [accompagne, setAccompagne] = useState('non');
+  const [nombreAccompagnant,setNombreAccompagnant] = useState('');
 
 
   // États pour les résultats et l'UI
@@ -21,18 +23,18 @@ const SoinsPage = () => {
   const [coursVenteDevise, setCoursVenteDevise] = useState('');
   const [coursVenteDinars, setCoursVenteDinars] = useState('');
   const [commission, setCommission] = useState('');
+  const [totalEnDinars, setTotalEnDinars] = useState('');
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [step, setStep] = useState(1);
   const [formIsValid, setFormIsValid] = useState(false);
+  const [tauxDeChangeData, setTauxDeChangeData] = useState([]); // Nouveau: pour stocker les taux du backend
+  const [loadingTaux, setLoadingTaux] = useState(true);
+  const [errorTaux, setErrorTaux] = useState(null);
 
-  // Tableau de bord des taux de change actuels (simulation)
-  const tauxDeChange = [
-    { devise: 'EUR', achat: '142.50 DA', vente: '146.67 DA' },
-    { devise: 'USD', achat: '127.80 DA', vente: '132.20 DA' },
-    { devise: 'GBP', achat: '167.40 DA', vente: '173.20 DA' },
-  ];
+
+ 
   const devisesAlgerie = [
     'EUR',
     'USD',
@@ -50,12 +52,44 @@ const SoinsPage = () => {
    
 
    // Liste des options pour la civilité
-   const civilites = ['Mr', 'Mme', 'Mlle'];
+   const baremes = ['Malade Adulte  ', 'Malade enfant','deux malades adultes','Accompagnant', 'Rapatriement malade','soins sans prise en charge' ];
+   const listePays = [
+    'Algérie',
+    'France',
+    'États-Unis',
+    'Canada',
+    'Royaume-Uni',
+    'Allemagne',
+    'Espagne',
+    'Italie',
+    'Japon',
+    'Australie',
+  ];
+// Nouveau: Récupérer les taux de change depuis le backend au chargement du composant
+useEffect(() => {
+  const fetchTauxDeChange = async () => {
+    setLoadingTaux(true);
+    setErrorTaux(null);
+    try {
+      const response = await fetch('http://localhost:5000/api/taux-de-change'); // Assurez-vous que cette URL est correcte
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setTauxDeChangeData(data);
+    } catch (e) {
+      setErrorTaux(e.message);
+    } finally {
+      setLoadingTaux(false);
+    }
+  };
 
+  fetchTauxDeChange();
+}, []); 
 
   // Validation du formulaire
   const validateForm = () => {
-    const isValid = nom && prenom && numPasseport && dateDeLivraison && adresse &&  devise  && nationalite && bareme && paysDestination;
+    const isValid = nom && prenom && numPasseport && dateDeLivraison && adresse &&  devise  && nationalite && bareme && paysDestination && date && accompagne && nombreAccompagnant;
     setFormIsValid(isValid);
     return isValid;
   };
@@ -63,35 +97,124 @@ const SoinsPage = () => {
   // Gérer l'affichage des résultats
   const handleAfficherResultat = () => {
     if (validateForm()) {
-      setCoursVenteDevise('750 EUR');
-      setCoursVenteDinars('110000.00 DA');
-      setCommission('Null');
+      const selectedDeviseData = tauxDeChangeData.find(taux => taux.code === devise);
+  
+      if (!selectedDeviseData || !selectedDeviseData.tauxVente) {
+        alert('Le taux de vente pour la devise sélectionnée n\'est pas disponible. Veuillez recharger la page ou vérifier la configuration des taux.');
+        return;
+      }
+  
+      const tauxVenteNumerique = parseFloat(selectedDeviseData.tauxVente);
+      const nombreAccompagnantNumerique = parseInt(nombreAccompagnant, 10) || 0; // S'assurer que c'est un nombre, 0 par défaut
+  
+      let calculatedCoursVenteDinars = 0;
+      let calculatedCommission = 0;
+      let calculatedCoursVenteDevise = 0;
+      let calculatedTotalEnDinars = 0;
+  
+      // Calcul de coursVenteDinars basé sur le barème
+      switch (bareme) {
+        case 'Malade Adulte':
+          calculatedCoursVenteDinars = 15900;
+          break;
+        case 'Malade enfant':
+          calculatedCoursVenteDinars = 7600;
+          break;
+        case 'Rapatriement malade':
+          calculatedCoursVenteDinars = 5900;
+          break;
+        case 'Accompagnant':
+          calculatedCoursVenteDinars = 13500;
+          break;
+        case 'soins sans prise en charge':
+          calculatedCoursVenteDinars = 120000;
+          break;
+        default:
+          calculatedCoursVenteDinars = 0; // Valeur par défaut si aucun barème ne correspond
+      }
+  
+      // Ajouter les frais des accompagnants
+      calculatedCoursVenteDinars += 13500 * nombreAccompagnantNumerique;
+  
+      // Calcul de la commission
+      calculatedCommission = 60 * (nombreAccompagnantNumerique + 1);
+  
+      // Calcul de coursVenteDevise
+      if (tauxVenteNumerique > 0) {
+        calculatedCoursVenteDevise = calculatedCoursVenteDinars / tauxVenteNumerique;
+      } else {
+        alert('Le taux de vente est nul, impossible de calculer le cours en devise.');
+        return;
+      }
+  
+      // Calcul du total
+      calculatedTotalEnDinars = calculatedCoursVenteDinars + calculatedCommission;
+  
+      // Mettre à jour les états avec les valeurs calculées
+      setCoursVenteDevise(calculatedCoursVenteDevise.toFixed(2) + ' ' + devise);
+      setCoursVenteDinars(calculatedCoursVenteDinars.toFixed(2) + ' DA');
+      setCommission(calculatedCommission.toFixed(2) + ' DA');
+      setTotalEnDinars(calculatedTotalEnDinars.toFixed(2) + ' DA');
+  
       setResultatVisible(true);
       setStep(2);
     } else {
-      // Animation de champs non valides serait ajoutée ici
+      alert('Veuillez remplir tous les champs obligatoires avant de passer à l\'étape suivante.');
     }
   };
-
   // Gérer l'envoi du formulaire à la base de données
-  const handleEnvoyer = () => {
-    // Simulation d'envoi à la base de données
-    setConfirmationVisible(true);
-    setNotificationVisible(true);
-    setStep(3);
-
-    // En production, vous enverriez les données à votre API ici
-    console.log('Données envoyées à la BDD:', {
-      nom, prenom, numPasseport, dateDeLivraison, adresse,nationalite,paysDestination,bareme,devise,frais,
-      coursVenteDevise, coursVenteDinars, commission
-    });
-
-    // Masquer la notification après 5 secondes
-    setTimeout(() => {
-      setNotificationVisible(false);
-    }, 5000);
+  const handleEnvoyer = async () => {
+    if (formIsValid) {
+      try {
+        const response = await fetch('http://localhost:5000/api/soins', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nom,
+            prenom,
+            date,
+            numPasseport,
+            dateDeLivraison,
+            adresse,
+            nationalite,
+            paysDestination,
+            bareme,
+            devise,
+            accompagne,
+            nombreAccompagnant,
+            coursVenteDevise,
+            coursVenteDinars,
+            commission,
+            totalEnDinars,
+          }),
+        });
+  
+        if (response.ok) {
+          setConfirmationVisible(true);
+          setNotificationVisible(true);
+          setStep(3);
+          // Réinitialiser le formulaire après l'envoi réussi (optionnel)
+          setTimeout(() => {
+            handleAnnuler();
+            setNotificationVisible(false);
+          }, 5000);
+        } else {
+          // Gérer les erreurs de la requête (afficher un message d'erreur à l'utilisateur)
+          console.error('Erreur lors de l\'envoi des données:', response.status);
+          // Vous pourriez mettre à jour un état d'erreur pour afficher un message à l'utilisateur
+        }
+      } catch (error) {
+        // Gérer les erreurs de connexion ou autres
+        console.error('Erreur de connexion ou autre:', error);
+        // Vous pourriez mettre à jour un état d'erreur pour afficher un message à l'utilisateur
+      }
+    } else {
+      // Gérer le cas où le formulaire n'est pas valide (bien que cela devrait être géré par la validation précédente)
+      console.log('Le formulaire n\'est pas valide.');
+    }
   };
-
   // Réinitialiser le formulaire
   const handleAnnuler = () => {
     setNom('');
@@ -103,10 +226,13 @@ const SoinsPage = () => {
     setPaysDestination('');
     setBareme('');
     setDevise('');
-    setFrais('non');
+    setDate('');
+    setAccompagne('non');
+    setNombreAccompagnant('');
     setCoursVenteDevise('');
     setCoursVenteDinars('');
     setCommission('');
+    setTotalEnDinars('');
     setResultatVisible(false);
     setConfirmationVisible(false);
     setFormIsValid(false);
@@ -223,6 +349,20 @@ const SoinsPage = () => {
                 </h3>
 
                 <div className="form-grid">
+                <div className="form-group">
+                    <label className="form-label">Date</label>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        className="form-input"
+                        disabled={step !== 1}
+                        required
+                      />
+                      {/*<Calendar size={18} className="form-icon-right" />*/}
+                    </div>
+                  </div>
                   <div className="form-group">
                     <label className="form-label">Nom</label>
                     <input
@@ -293,32 +433,31 @@ const SoinsPage = () => {
 
                   <div className="form-group">
                     <label className="form-label">Nationalité</label>
-                    <input
-                      type="tel"
-                      value={nationalite}
-                      onChange={(e) => setNationalite(e.target.value)}
-                      className="form-input"
-                      placeholder="Ex: +213 123 456 789"
-                      disabled={step !== 1}
-                      required
-                    />
+                    <select value={nationalite} onChange={(e) => setNationalite(e.target.value)} className="form-input" disabled={step !== 1} required>
+                      <option value="">selectionner</option>
+                      {listePays.map((nat) => (
+                        <option key={nat} value={nat}>
+                          {nat}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="form-group">
                     <label className="form-label">Pays DE Destination</label>
                     <input
-                      type="email"
+                      type="text"
                       value={paysDestination}
                       onChange={(e) => setPaysDestination(e.target.value)}
                       className="form-input"
-                      placeholder="email@exemple.com"
+                      placeholder="entre le pays"
                       disabled={step !== 1}
                       required
                     />
                   </div>
                   
                   <div className="form-group">
-                    <label className="form-label">Brème</label>
+                    <label className="form-label">Barème</label>
                     <select
                       value={bareme}
                       onChange={(e) => setBareme(e.target.value)}
@@ -328,7 +467,7 @@ const SoinsPage = () => {
                       required
                     >
                       <option value="">Sélectionner</option>
-                      {civilites.map((option) => (
+                      {baremes.map((option) => (
                         <option key={option} value={option}>
                           {option}
                         </option>
@@ -354,10 +493,10 @@ const SoinsPage = () => {
                     </select>
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Frais</label>
+                    <label className="form-label">Accompagné</label>
                     <select
-                      value={frais}
-                      onChange={(e) => setFrais(e.target.value)}
+                      value={accompagne}
+                      onChange={(e) => setAccompagne(e.target.value)}
                       className="form-input"
                       disabled={step !== 1}
                       required
@@ -365,6 +504,18 @@ const SoinsPage = () => {
                       <option value="non">Non</option>
                       <option value="oui">Oui</option>
                     </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Nombre Accompagnants</label>
+                    <input
+                      type="text"
+                      value={nombreAccompagnant}
+                      onChange={(e) => setNombreAccompagnant(e.target.value)}
+                      className="form-input"
+                      placeholder="entrez le nbr"
+                      disabled={step !== 1}
+                      required
+                    />
                   </div>
                 </div>
 
@@ -418,6 +569,10 @@ const SoinsPage = () => {
                         className="form-input readonly"
                         readOnly
                       />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Total</label>
+                      <input type="text" value={totalEnDinars} className="form-input readonly" readOnly />
                     </div>
                   </div>
 

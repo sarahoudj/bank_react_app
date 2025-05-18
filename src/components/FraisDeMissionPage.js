@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import { Bell, User, Menu, DollarSign, CreditCard, Calendar, ChevronRight, CheckCircle, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import './FraisDeMissionPage.css'; // Importez le fichier CSS
 
 const FraisDeMissionPage=() => {
@@ -15,6 +16,9 @@ const FraisDeMissionPage=() => {
   const [civilite, setCivilite] = useState(''); 
   const [devise, setDevise] = useState('');
   const [frais, setFrais] = useState('non');
+  const [montant, setMontant] = useState(''); // Nouveau state pour le montant
+  const [date,setDate] = useState('');
+  const [nombreAccompagnant,setNombreAccompagnant] = useState('');
 
 
   // États pour les résultats et l'UI
@@ -22,18 +26,22 @@ const FraisDeMissionPage=() => {
   const [coursVenteDevise, setCoursVenteDevise] = useState('');
   const [coursVenteDinars, setCoursVenteDinars] = useState('');
   const [commission, setCommission] = useState('');
+   const [totalEnDinars, setTotalEnDinars] = useState('');
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [step, setStep] = useState(1);
   const [formIsValid, setFormIsValid] = useState(false);
+  const [tauxDeChangeData, setTauxDeChangeData] = useState([]);
+  const [loadingTaux, setLoadingTaux] = useState(true);
+  const [errorTaux, setErrorTaux] = useState(null);
 
-  // Tableau de bord des taux de change actuels (simulation)
+  /*// Tableau de bord des taux de change actuels (simulation)
   const tauxDeChange = [
     { devise: 'EUR', achat: '142.50 DA', vente: '146.67 DA' },
     { devise: 'USD', achat: '127.80 DA', vente: '132.20 DA' },
     { devise: 'GBP', achat: '167.40 DA', vente: '173.20 DA' },
-  ];
+  ];*/
   const devisesAlgerie = [
     'EUR',
     'USD',
@@ -66,47 +74,121 @@ const FraisDeMissionPage=() => {
     'Ministère de l\'Éducation nationale',
     'Ministère de la Santé, de la Population et de la Réforme hospitalière',
    ];
-
+   useEffect(() => {
+    const fetchTauxDeChange = async () => {
+      setLoadingTaux(true);
+      setErrorTaux(null);
+      try {
+        const response = await fetch('http://localhost:5000/api/taux-de-change');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setTauxDeChangeData(data);
+      } catch (e) {
+        setErrorTaux(e.message);
+      } finally {
+        setLoadingTaux(false);
+      }
+    };
+  
+    fetchTauxDeChange();
+  }, []);
 
   // Validation du formulaire
   const validateForm = () => {
-    const isValid = nom && prenom && numPasseport && dateDeLivraison && ministere &&  devise && ordMission && nationalite &&civilite && paysDestination;
+    const isValid = nom && prenom && numPasseport && dateDeLivraison && ministere &&  devise && ordMission && nationalite &&civilite && paysDestination && date && montant && nombreAccompagnant;
     setFormIsValid(isValid);
     return isValid;
   };
-
-  // Gérer l'affichage des résultats
   const handleAfficherResultat = () => {
     if (validateForm()) {
-      setCoursVenteDevise('750 EUR');
-      setCoursVenteDinars('110000.00 DA');
-      setCommission('Null');
-      setResultatVisible(true);
-      setStep(2);
+      const selectedDeviseData = tauxDeChangeData.find(taux => taux.code === devise);
+  
+      if (selectedDeviseData && selectedDeviseData.tauxVente) {
+        const tauxVenteNumerique = parseFloat(selectedDeviseData.tauxVente);
+        const montantNumerique = parseFloat(montant);
+        const nombreAccompagnantNumerique = parseInt(nombreAccompagnant, 10) || 0;
+  
+        if (!isNaN(montantNumerique) && !isNaN(tauxVenteNumerique)) {
+          const calculatedCoursVenteDevise = montantNumerique / tauxVenteNumerique;
+          const calculatedCommission = 60 * nombreAccompagnantNumerique;
+          const calculatedTotalEnDinars = montantNumerique + calculatedCommission;
+  
+          setCoursVenteDevise(calculatedCoursVenteDevise.toFixed(2) + ' ' + devise);
+          setCoursVenteDinars(montantNumerique.toFixed(2) + ' DA');
+          setCommission(calculatedCommission.toFixed(2) + ' DA');
+          setTotalEnDinars(calculatedTotalEnDinars.toFixed(2) + ' DA');
+          setResultatVisible(true);
+          setStep(2);
+        } else {
+          alert('Veuillez entrer un montant et un nombre d\'accompagnants valides.');
+        }
+      } else {
+        alert('Le taux de vente pour la devise sélectionnée n\'est pas disponible.');
+      }
     } else {
-      // Animation de champs non valides serait ajoutée ici
+      // ...
     }
   };
+ 
 
   // Gérer l'envoi du formulaire à la base de données
-  const handleEnvoyer = () => {
-    // Simulation d'envoi à la base de données
-    setConfirmationVisible(true);
-    setNotificationVisible(true);
-    setStep(3);
-
-    // En production, vous enverriez les données à votre API ici
-    console.log('Données envoyées à la BDD:', {
-      nom, prenom, numPasseport, dateDeLivraison, ministere,nationalite,paysDestination,ordMission,civilite,devise,frais,
-      coursVenteDevise, coursVenteDinars, commission
-    });
-
-    // Masquer la notification après 5 secondes
-    setTimeout(() => {
-      setNotificationVisible(false);
-    }, 5000);
+ 
+  const handleEnvoyer = async () => {
+    if (formIsValid) {
+      try {
+        const response = await fetch('http://localhost:5000/api/frais-missions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nom,
+            prenom,
+            numPasseport,
+            dateDeLivraison,
+            ministere,
+            nationalite,
+            paysDestination,
+            civilite,
+            devise,
+            ordMission,
+            montant,
+            nombreAccompagnant,
+            frais,
+            coursVenteDevise,
+            coursVenteDinars,
+            commission,
+            totalEnDinars,
+            date,
+          }),
+        });
+  
+        if (response.ok) {
+          setConfirmationVisible(true);
+          setNotificationVisible(true);
+          setStep(3);
+          // Réinitialiser le formulaire après l'envoi réussi (optionnel)
+          setTimeout(() => {
+            handleAnnuler();
+            setNotificationVisible(false);
+          }, 5000);
+        } else {
+          // Gérer les erreurs de la requête (afficher un message d'erreur à l'utilisateur)
+          console.error('Erreur lors de l\'envoi des données:', response.status);
+          // Vous pourriez mettre à jour un état d'erreur pour afficher un message à l'utilisateur
+        }
+      } catch (error) {
+        // Gérer les erreurs de connexion ou autres
+        console.error('Erreur de connexion ou autre:', error);
+        // Vous pourriez mettre à jour un état d'erreur pour afficher un message à l'utilisateur
+      }
+    } else {
+      // Gérer le cas où le formulaire n'est pas valide (bien que cela devrait être géré par la validation précédente)
+      console.log('Le formulaire n\'est pas valide.');
+    }
   };
-
   // Réinitialiser le formulaire
   const handleAnnuler = () => {
     setNom('');
@@ -119,10 +201,14 @@ const FraisDeMissionPage=() => {
     setOrdMission('');
     setCivilite('');
     setDevise('');
+    setDate('');
+    setMontant('');
+    setNombreAccompagnant('');
     setFrais('non');
     setCoursVenteDevise('');
     setCoursVenteDinars('');
     setCommission('');
+    setTotalEnDinars('');
     setResultatVisible(false);
     setConfirmationVisible(false);
     setFormIsValid(false);
@@ -145,58 +231,7 @@ const FraisDeMissionPage=() => {
         </div>
       )}
 
-      {/* Header 
-      <header className="header">
-        <div className="header-container">
-          <div className="header-left">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="menu-button"
-            >
-              <Menu size={24} />
-            </button>
-            <div className="logo-container">
-              <CreditCard size={28} className="logo-icon" />
-              <h1 className="logo-text">BanqueChange</h1>
-            </div>
-          </div>
-
-          <nav className="header-nav">
-            <a href="#" className="nav-link active">Allocations</a>
-            <a href="#" className="nav-link">Devises</a>
-            <a href="#" className="nav-link">Clients</a>
-            <a href="#" className="nav-link">Rapports</a>
-          </nav>
-
-          <div className="header-right">
-            <button className="notification-button">
-              <Bell size={20} />
-              <span className="notification-badge"></span>
-            </button>
-            <div className="user-info">
-              <div className="user-avatar">
-                <User size={16} />
-              </div>
-              <span className="user-name">Agent</span>
-            </div>
-          </div>
-        </div>
-      </header>
-       */}
-      {/* Mobile menu 
-      {menuOpen && (
-        <div className="mobile-menu">
-          <div className="mobile-menu-container">
-            <nav className="mobile-nav">
-              <a href="#" className="mobile-nav-link active">Allocations</a>
-              <a href="#" className="mobile-nav-link">Devises</a>
-              <a href="#" className="mobile-nav-link">Clients</a>
-              <a href="#" className="mobile-nav-link">Rapports</a>
-            </nav>
-          </div>
-        </div>
-      )}
-       */}
+     
       {/* Main content */}
       <main className="main-content">
         <div className="main-container">
@@ -237,8 +272,37 @@ const FraisDeMissionPage=() => {
                   <User size={20} className="form-section-icon" />
                   Informations du Client
                 </h3>
+                
+
 
                 <div className="form-grid">
+                <div className="form-group">
+                    <label className="form-label">Date</label>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        className="form-input"
+                        disabled={step !== 1}
+                        required
+                      />
+                      {/*<Calendar size={18} className="form-icon-right" />*/}
+                    </div>
+                  </div>
+                 
+                  <div className="form-group">
+                    <label className="form-label">Montant(DA)</label>
+                    <input
+                      type="text"
+                      value={montant}
+                      onChange={(e) => setMontant(e.target.value)}
+                      className="form-input"
+                      placeholder="entrez le montant "
+                      disabled={step !== 1}
+                      required
+                    />
+                  </div>
                   <div className="form-group">
                     <label className="form-label">Nom</label>
                     <input
@@ -320,7 +384,7 @@ const FraisDeMissionPage=() => {
                       value={nationalite}
                       onChange={(e) => setNationalite(e.target.value)}
                       className="form-input"
-                      placeholder="Ex: +213 123 456 789"
+                      placeholder=""
                       disabled={step !== 1}
                       required
                     />
@@ -387,6 +451,20 @@ const FraisDeMissionPage=() => {
                     </select>
                   </div>
                   <div className="form-group">
+                    <label className="form-label">Nombre_Acc</label>
+                    <input
+                      type="text"
+                      value={nombreAccompagnant}
+                      onChange={(e) => setNombreAccompagnant(e.target.value)}
+                      className="form-input"
+                      placeholder="entrez le nombre "
+                      disabled={step !== 1}
+                      required
+                    />
+                  </div>
+
+
+                  <div className="form-group">
                     <label className="form-label">Frais</label>
                     <select
                       value={frais}
@@ -452,6 +530,10 @@ const FraisDeMissionPage=() => {
                         readOnly
                       />
                     </div>
+                    <div className="form-group">
+                      <label className="form-label">Total</label>
+                      <input type="text" value={totalEnDinars} className="form-input readonly" readOnly />
+                    </div>
                   </div>
 
                   {confirmationVisible && (
@@ -507,27 +589,34 @@ const FraisDeMissionPage=() => {
             <div className="exchange-rates-card">
               <h3 className="sidebar-title">Taux de Change</h3>
               <div className="exchange-rates-list">
-                {tauxDeChange.map((taux, index) => (
-                  <div key={index} className="exchange-rate-item">
-                    <div className="currency-info">
-                      <div className="currency-symbol">{taux.devise.charAt(0)}</div>
-                      <div>
-                        <p className="currency-name">{taux.devise}</p>
-                        <p className="currency-base">Dinar Algérien</p>
+                {loadingTaux ? (
+                  <p>Chargement des taux...</p>
+                ) : errorTaux ? (
+                  <p>Erreur lors du chargement des taux: {errorTaux}</p>
+                ) : (
+                  tauxDeChangeData
+                    .slice(0, 3) // Sélection des trois premiers éléments
+                    .map((taux) => (
+                      <div key={taux.code} className="exchange-rate-item">
+                        <div className="currency-info">
+                          <div className="currency-symbol">{taux.code.charAt(0)}</div>
+                          <div>
+                            <p className="currency-name">{taux.nom} ({taux.code})</p>
+                            <p className="currency-base">Dinar Algérien</p>
+                          </div>
+                        </div>
+                        <div className="rate-info">
+                        <p className="rate-value">{taux.tauxVente}</p>
+                        {/*<p className="rate-type">Vente</p>*/}
                       </div>
                     </div>
-                    <div className="rate-info">
-                      <p className="rate-value">{taux.vente}</p>
-                      <p className="rate-type">Vente</p>
-                    </div>
+                  )))}
                   </div>
-                ))}
-              </div>
               <hr/>
               <div className="view-all-rates">
-                <a href="#" className="view-all-link">
+                <Link to="/cotation"className="view-all-link">
                   Voir tous les taux <ChevronRight size={16} />
-                </a>
+                </Link>
               </div>
             </div>
 

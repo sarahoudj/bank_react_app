@@ -7,7 +7,7 @@ const Services = () => {
     <section className="services">
       {/* Titre et sous-titre */}
       <div className="services-header">
-        <h2 className="section-title">Our <span>Services</span></h2>
+        <h2 className="section-title"> <span>options</span></h2>
         <p className="section-subtitle">Welcome to [website name], your one-stop destination</p>
       </div>
 
@@ -33,7 +33,7 @@ const Services = () => {
               <h3>Soins à l'étranger</h3>
               <p>Bénéficiez des meilleurs traitements.</p>
             </div>
-            <Link to="/allocation-touristique" className="icon-button">
+            <Link to="/soins" className="icon-button">
             <img src="mg.jpg" alt="Voir plus" />
           </Link>
           </div>
@@ -45,7 +45,7 @@ const Services = () => {
               <h3>Missions à l'étranger</h3>
               <p>Accomplissez vos objectifs à l'international.</p>
             </div>
-            <Link to="/allocation-touristique" className="icon-button">
+            <Link to="/missions" className="icon-button">
             <img src="mg.jpg" alt="Voir plus" />
           </Link>
           </div>

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, User, Menu, DollarSign, CreditCard, Calendar, ChevronRight, CheckCircle, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import './AllocationTouristiquePage.css'; // Importez le fichier CSS
 
 const AllocationTouristiquePage = () => {
@@ -7,33 +8,32 @@ const AllocationTouristiquePage = () => {
   const [nom, setNom] = useState('');
   const [prenom, setPrenom] = useState('');
   const [numPasseport, setNumPasseport] = useState('');
-  const [dateDeLivraison, setDateDeLivraison] = useState('');
+  const [dateDeLivraison, setDateDeLivraison] = useState('');;
   const [adresse, setAdresse] = useState('');
   const [nationalite, setNationalite] = useState('');
   const [paysDestination, setPaysDestination] = useState('');
-  const [categorie, setCategorie] = useState(''); 
-  const [civilite, setCivilite] = useState(''); 
+  const [categorie, setCategorie] = useState('');
+  const [civilite, setCivilite] = useState('');
   const [devise, setDevise] = useState('');
   const [frais, setFrais] = useState('non');
-
+  const [date,setDate] = useState(''); 
 
   // États pour les résultats et l'UI
   const [resultatVisible, setResultatVisible] = useState(false);
   const [coursVenteDevise, setCoursVenteDevise] = useState('');
   const [coursVenteDinars, setCoursVenteDinars] = useState('');
+  const [totalEnDinars, setTotalEnDinars] = useState('');
   const [commission, setCommission] = useState('');
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [step, setStep] = useState(1);
   const [formIsValid, setFormIsValid] = useState(false);
+  const [tauxVenteActuel, setTauxVenteActuel] = useState(0);
+  const [loadingTaux, setLoadingTaux] = useState(false);
+  const [errorTaux, setErrorTaux] = useState(null);
+  const [tauxDeChangeData, setTauxDeChangeData] = useState([]);
 
-  // Tableau de bord des taux de change actuels (simulation)
-  const tauxDeChange = [
-    { devise: 'EUR', achat: '142.50 DA', vente: '146.67 DA' },
-    { devise: 'USD', achat: '127.80 DA', vente: '132.20 DA' },
-    { devise: 'GBP', achat: '167.40 DA', vente: '173.20 DA' },
-  ];
   const devisesAlgerie = [
     'EUR',
     'USD',
@@ -44,29 +44,70 @@ const AllocationTouristiquePage = () => {
     'SAR',
     'AED',
     'KWD',
-    'QAR',
-    'LYD',
-    'MAD',
+    'SEK',
+    'DKK',
+    'NOK',
   ];
-   // Liste des options pour la catégorie
-   const categories = ['Adulte', 'Enfant'];
+  const listePays = [
+    'Algérie',
+    'France',
+    'États-Unis',
+    'Canada',
+    'Royaume-Uni',
+    'Allemagne',
+    'Espagne',
+    'Italie',
+    'Japon',
+    'Australie',
+  ];
+  const categories = ['Adulte', 'Enfant'];
+  const civilites = ['Mr', 'Mme', 'Mlle'];
+   
 
-   // Liste des options pour la civilité
-   const civilites = ['Mr', 'Mme', 'Mlle'];
+    
+  useEffect(() => {
+    const fetchTauxDeChange = async () => {
+      setLoadingTaux(true);
+      setErrorTaux(null);
+      try {
+        const response = await fetch('http://localhost:5000/api/taux-de-change');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setTauxDeChangeData(data);
+      } catch (e) {
+        setErrorTaux(e.message);
+      } finally {
+        setLoadingTaux(false);
+      }
+    };
 
+    fetchTauxDeChange();
+  }, []);
+  
+  useEffect(() => {
+    const tauxSelectionne = tauxDeChangeData.find((taux) => taux.code === devise);
+    if (tauxSelectionne) {
+      setTauxVenteActuel(parseFloat(tauxSelectionne.tauxVente));
+    } else {
+      setTauxVenteActuel(0);
+    }
+  }, [devise, tauxDeChangeData]);
 
-  // Validation du formulaire
   const validateForm = () => {
-    const isValid = nom && prenom && numPasseport && dateDeLivraison && adresse &&  devise && categorie && nationalite &&civilite && paysDestination;
+    const isValid = nom && prenom && numPasseport && dateDeLivraison && adresse && devise && categorie && nationalite && civilite && paysDestination && date ;
     setFormIsValid(isValid);
     return isValid;
   };
 
-  // Gérer l'affichage des résultats
   const handleAfficherResultat = () => {
     if (validateForm()) {
-      setCoursVenteDevise('750 EUR');
-      setCoursVenteDinars('110000.00 DA');
+      const montantDevise = categorie === 'Adulte' ? 750 : 750 / 2;
+      setCoursVenteDevise(`${montantDevise} ${devise}`);
+      const montantEnDinars = montantDevise * tauxVenteActuel;
+      setCoursVenteDinars(montantEnDinars.toFixed(2) + ' DA');
+      setTotalEnDinars(montantEnDinars.toFixed(2) + ' DA');
       setCommission('Null');
       setResultatVisible(true);
       setStep(2);
@@ -75,26 +116,91 @@ const AllocationTouristiquePage = () => {
     }
   };
 
-  // Gérer l'envoi du formulaire à la base de données
-  const handleEnvoyer = () => {
+ {/* const handleEnvoyer = () => {
     // Simulation d'envoi à la base de données
     setConfirmationVisible(true);
     setNotificationVisible(true);
     setStep(3);
+    
 
     // En production, vous enverriez les données à votre API ici
     console.log('Données envoyées à la BDD:', {
-      nom, prenom, numPasseport, dateDeLivraison, adresse,nationalite,paysDestination,categorie,civilite,devise,frais,
-      coursVenteDevise, coursVenteDinars, commission
+      nom,
+      prenom,
+      numPasseport,
+      dateDeLivraison,
+      adresse,
+      nationalite,
+      paysDestination,
+      categorie,
+      civilite,
+      devise,
+      frais,
+      coursVenteDevise,
+      coursVenteDinars,
+      commission,
+      date,
     });
 
     // Masquer la notification après 5 secondes
     setTimeout(() => {
       setNotificationVisible(false);
     }, 5000);
+  };*/}
+  const handleEnvoyer = async () => {
+    if (formIsValid) {
+      try {
+        const response = await fetch('http://localhost:5000/api/allocations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nom,
+            prenom,
+            numPasseport,
+            dateDeLivraison,
+            adresse,
+            nationalite,
+            paysDestination,
+            categorie,
+            civilite,
+            devise,
+            frais,
+            coursVenteDevise,
+            coursVenteDinars,
+            commission,
+            totalEnDinars,
+            date,
+          }),
+        });
+  
+        if (response.ok) {
+          setConfirmationVisible(true);
+          setNotificationVisible(true);
+          setStep(3);
+          // Réinitialiser le formulaire après l'envoi réussi (optionnel)
+          setTimeout(() => {
+            handleAnnuler();
+            setNotificationVisible(false);
+          }, 5000);
+        } else {
+          // Gérer les erreurs de la requête (afficher un message d'erreur à l'utilisateur)
+          console.error('Erreur lors de l\'envoi des données:', response.status);
+          // Vous pourriez mettre à jour un état d'erreur pour afficher un message à l'utilisateur
+        }
+      } catch (error) {
+        // Gérer les erreurs de connexion ou autres
+        console.error('Erreur de connexion ou autre:', error);
+        // Vous pourriez mettre à jour un état d'erreur pour afficher un message à l'utilisateur
+      }
+    } else {
+      // Gérer le cas où le formulaire n'est pas valide (bien que cela devrait être géré par la validation précédente)
+      console.log('Le formulaire n\'est pas valide.');
+    }
   };
+   // Réinitialiser le formulaire
 
-  // Réinitialiser le formulaire
   const handleAnnuler = () => {
     setNom('');
     setPrenom('');
@@ -107,8 +213,10 @@ const AllocationTouristiquePage = () => {
     setCivilite('');
     setDevise('');
     setFrais('non');
+    setDate('');
     setCoursVenteDevise('');
     setCoursVenteDinars('');
+    setTotalEnDinars('');
     setCommission('');
     setResultatVisible(false);
     setConfirmationVisible(false);
@@ -118,13 +226,15 @@ const AllocationTouristiquePage = () => {
 
   return (
     <div className="allocation-page">
-      {/* Notification */}
+       {/* Notification */}
       {notificationVisible && (
         <div className="notification-container">
           <CheckCircle size={20} className="notification-icon" />
           <div className="notification-text-container">
             <p className="notification-title">Allocation enregistrée avec succès</p>
-            <p className="notification-subtitle">Allocation pour {prenom} {nom}</p>
+            <p className="notification-subtitle">
+              Allocation pour {prenom} {nom}
+            </p>
           </div>
           <button onClick={() => setNotificationVisible(false)} className="notification-close-button">
             <X size={16} />
@@ -132,63 +242,10 @@ const AllocationTouristiquePage = () => {
         </div>
       )}
 
-      {/* Header 
-      <header className="header">
-        <div className="header-container">
-          <div className="header-left">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="menu-button"
-            >
-              <Menu size={24} />
-            </button>
-            <div className="logo-container">
-              <CreditCard size={28} className="logo-icon" />
-              <h1 className="logo-text">BanqueChange</h1>
-            </div>
-          </div>
-
-          <nav className="header-nav">
-            <a href="#" className="nav-link active">Allocations</a>
-            <a href="#" className="nav-link">Devises</a>
-            <a href="#" className="nav-link">Clients</a>
-            <a href="#" className="nav-link">Rapports</a>
-          </nav>
-
-          <div className="header-right">
-            <button className="notification-button">
-              <Bell size={20} />
-              <span className="notification-badge"></span>
-            </button>
-            <div className="user-info">
-              <div className="user-avatar">
-                <User size={16} />
-              </div>
-              <span className="user-name">Agent</span>
-            </div>
-          </div>
-        </div>
-      </header>
-       */}
-      {/* Mobile menu 
-      {menuOpen && (
-        <div className="mobile-menu">
-          <div className="mobile-menu-container">
-            <nav className="mobile-nav">
-              <a href="#" className="mobile-nav-link active">Allocations</a>
-              <a href="#" className="mobile-nav-link">Devises</a>
-              <a href="#" className="mobile-nav-link">Clients</a>
-              <a href="#" className="mobile-nav-link">Rapports</a>
-            </nav>
-          </div>
-        </div>
-      )}
-       */}
-      {/* Main content */}
       <main className="main-content">
         <div className="main-container">
           <div className="form-section">
-            {/* Page header */}
+            {/* Page header */}
             <div className="page-header">
               <h2 className="page-title">Allocation Touristique</h2>
               <div className="breadcrumb">
@@ -199,8 +256,7 @@ const AllocationTouristiquePage = () => {
                 <span className="breadcrumb-current">Nouvelle allocation</span>
               </div>
             </div>
-
-            {/* Progress tracker */}
+              {/* Progress tracker */}
             <div className="progress-tracker">
               <div className="progress-line">
                 <div className={`progress-step ${step >= 1 ? 'active' : ''}`}>1</div>
@@ -216,9 +272,9 @@ const AllocationTouristiquePage = () => {
               </div>
             </div>
 
-            {/* Form card */}
+              {/* Form card */}
             <div className="form-card">
-              {/* Première partie: Informations client */}
+               {/* Première partie: Informations client */}
               <div className={`form-step ${step !== 1 ? 'disabled' : ''}`}>
                 <h3 className="form-section-title">
                   <User size={20} className="form-section-icon" />
@@ -226,52 +282,13 @@ const AllocationTouristiquePage = () => {
                 </h3>
 
                 <div className="form-grid">
-                  <div className="form-group">
-                    <label className="form-label">Nom</label>
-                    <input
-                      type="text"
-                      value={nom}
-                      onChange={(e) => setNom(e.target.value)}
-                      className="form-input"
-                      placeholder="Entrez le nom"
-                      disabled={step !== 1}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Prénom</label>
-                    <input
-                      type="text"
-                      value={prenom}
-                      onChange={(e) => setPrenom(e.target.value)}
-                      className="form-input"
-                      placeholder="Entrez le prénom"
-                      disabled={step !== 1}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Numéro de Passeport</label>
-                    <input
-                      type="text"
-                      value={numPasseport}
-                      onChange={(e) => setNumPasseport(e.target.value)}
-                      className="form-input"
-                      placeholder="Ex: AB123456"
-                      disabled={step !== 1}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Date de Livraison</label>
+                <div className="form-group">
+                    <label className="form-label">Date</label>
                     <div className="relative">
                       <input
                         type="date"
-                        value={dateDeLivraison}
-                        onChange={(e) => setDateDeLivraison(e.target.value)}
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
                         className="form-input"
                         disabled={step !== 1}
                         required
@@ -279,55 +296,46 @@ const AllocationTouristiquePage = () => {
                       {/*<Calendar size={18} className="form-icon-right" />*/}
                     </div>
                   </div>
-                  
-
+                  <div className="form-group">
+                    <label className="form-label">Nom</label>
+                    <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} className="form-input" placeholder="Entrez le nom" disabled={step !== 1} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Prénom</label>
+                    <input type="text" value={prenom} onChange={(e) => setPrenom(e.target.value)} className="form-input" placeholder="Entrez le prénom" disabled={step !== 1} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Numéro de Passeport</label>
+                    <input type="text" value={numPasseport} onChange={(e) => setNumPasseport(e.target.value)} className="form-input" placeholder="Ex: AB123456" disabled={step !== 1} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Date de Livraison</label>
+                    <div className="relative">
+                      <input type="date" value={dateDeLivraison} onChange={(e) => setDateDeLivraison(e.target.value)} className="form-input" disabled={step !== 1} required />
+                    </div>
+                  </div>
                   <div className="form-group col-span-2">
                     <label className="form-label">Adresse</label>
-                    <input
-                      type="text"
-                      value={adresse}
-                      onChange={(e) => setAdresse(e.target.value)}
-                      className="form-input"
-                      placeholder="Adresse complète"
-                      disabled={step !== 1}
-                      required
-                    />
+                    <input type="text" value={adresse} onChange={(e) => setAdresse(e.target.value)} className="form-input" placeholder="Adresse complète" disabled={step !== 1} required />
                   </div>
-
                   <div className="form-group">
                     <label className="form-label">Nationalité</label>
-                    <input
-                      type="tel"
-                      value={nationalite}
-                      onChange={(e) => setNationalite(e.target.value)}
-                      className="form-input"
-                      placeholder="Ex: +213 123 456 789"
-                      disabled={step !== 1}
-                      required
-                    />
+                    <select value={nationalite} onChange={(e) => setNationalite(e.target.value)} className="form-input" disabled={step !== 1} required>
+                      <option value="">selectionner</option>
+                      {listePays.map((nat) => (
+                        <option key={nat} value={nat}>
+                          {nat}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-
                   <div className="form-group">
                     <label className="form-label">Pays DE Destination</label>
-                    <input
-                      type="email"
-                      value={paysDestination}
-                      onChange={(e) => setPaysDestination(e.target.value)}
-                      className="form-input"
-                      placeholder="email@exemple.com"
-                      disabled={step !== 1}
-                      required
-                    />
+                    <input type="text" value={paysDestination} onChange={(e) => setPaysDestination(e.target.value)} className="form-input" placeholder="entrez le  pays " disabled={step !== 1} required />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Catégorie</label>
-                    <select
-                      value={categorie}
-                      onChange={(e) => setCategorie(e.target.value)}
-                      className="form-input"
-                      disabled={step !== 1}
-                      required
-                    >
+                    <select value={categorie} onChange={(e) => setCategorie(e.target.value)} className="form-input" disabled={step !== 1} required>
                       <option value="">Sélectionner une catégorie</option>
                       {categories.map((cat) => (
                         <option key={cat} value={cat}>
@@ -338,13 +346,7 @@ const AllocationTouristiquePage = () => {
                   </div>
                   <div className="form-group">
                     <label className="form-label">Civilité</label>
-                    <select
-                      value={civilite}
-                      onChange={(e) => setCivilite(e.target.value)}
-                      className="form-input"
-                      disabled={step !== 1}
-                      required
-                    >
+                    <select value={civilite} onChange={(e) => setCivilite(e.target.value)} className="form-input" disabled={step !== 1} required>
                       <option value="">Sélectionner</option>
                       {civilites.map((option) => (
                         <option key={option} value={option}>
@@ -352,17 +354,11 @@ const AllocationTouristiquePage = () => {
                         </option>
                       ))}
                     </select>
+                  
                   </div>
-                  {/* Nouveaux champs */}
                   <div className="form-group">
                     <label className="form-label">Devise</label>
-                    <select
-                      value={devise}
-                      onChange={(e) => setDevise(e.target.value)}
-                      className="form-input"
-                      disabled={step !== 1}
-                      required
-                    >
+                    <select value={devise} onChange={(e) => setDevise(e.target.value)} className="form-input" disabled={step !== 1} required>
                       <option value="">Sélectionner une devise</option>
                       {devisesAlgerie.map((d) => (
                         <option key={d} value={d}>
@@ -373,13 +369,7 @@ const AllocationTouristiquePage = () => {
                   </div>
                   <div className="form-group">
                     <label className="form-label">Frais</label>
-                    <select
-                      value={frais}
-                      onChange={(e) => setFrais(e.target.value)}
-                      className="form-input"
-                      disabled={step !== 1}
-                      required
-                    >
+                    <select value={frais} onChange={(e) => setFrais(e.target.value)} className="form-input" disabled={step !== 1} required>
                       <option value="non">Non</option>
                       <option value="oui">Oui</option>
                     </select>
@@ -388,18 +378,13 @@ const AllocationTouristiquePage = () => {
 
                 {step === 1 && (
                   <div className="form-actions">
-                    <button
-                      type="button"
-                      onClick={handleAfficherResultat}
-                      className="primary-button"
-                    >
+                    <button type="button" onClick={handleAfficherResultat} className="primary-button">
                       Suivant <ChevronRight size={18} />
                     </button>
                   </div>
                 )}
               </div>
-
-              {/* Deuxième partie: Résultats */}
+               {/* Deuxième partie: Résultats */}
               {step >= 2 && (
                 <div className="form-step">
                   <h3 className="form-section-title">
@@ -409,33 +394,24 @@ const AllocationTouristiquePage = () => {
 
                   <div className="form-grid">
                     <div className="form-group">
-                      <label className="form-label">Cours de Vente en Devise</label>
-                      <input
-                        type="text"
-                        value={coursVenteDevise}
-                        className="form-input readonly"
-                        readOnly
-                      />
+                      <label className="form-label">Montant en Devise</label>
+                      <input type="text" value={coursVenteDevise} className="form-input readonly" readOnly />
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">Cours de Vente en Dinars</label>
-                      <input
-                        type="text"
-                        value={coursVenteDinars}
-                        className="form-input readonly"
-                        readOnly
-                      />
+                      <label className="form-label">Contre Valeur Dinars</label>
+                      <input type="text" value={coursVenteDinars} className="form-input readonly" readOnly />
                     </div>
+
+                   
 
                     <div className="form-group">
                       <label className="form-label">Commission</label>
-                      <input
-                        type="text"
-                        value={commission}
-                        className="form-input readonly"
-                        readOnly
-                      />
+                      <input type="text" value={commission} className="form-input readonly" readOnly />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Total</label>
+                      <input type="text" value={totalEnDinars} className="form-input readonly" readOnly />
                     </div>
                   </div>
 
@@ -445,7 +421,9 @@ const AllocationTouristiquePage = () => {
                         <CheckCircle size={24} className="confirmation-icon" />
                       </div>
                       <div>
-                        <p className="confirmation-title">Allocation touristique validée pour {prenom} {nom}</p>
+                        <p className="confirmation-title">
+                          Allocation touristique validée pour {prenom} {nom}
+                        </p>
                         <p className="confirmation-subtitle">Numéro de passeport: {numPasseport}</p>
                         <p className="confirmation-subtitle">Référence: ALT-{Math.floor(Math.random() * 100000)}</p>
                       </div>
@@ -453,30 +431,18 @@ const AllocationTouristiquePage = () => {
                   )}
 
                   <div className="form-actions justify-between">
-                    <button
-                      type="button"
-                      onClick={handleAnnuler}
-                      className="secondary-button"
-                    >
+                    <button type="button" onClick={handleAnnuler} className="secondary-button">
                       Annuler
                     </button>
 
                     {step === 2 && (
-                      <button
-                        type="button"
-                        onClick={handleEnvoyer}
-                        className="primary-button"
-                      >
+                      <button type="button" onClick={handleEnvoyer} className="primary-button">
                         Valider et Enregistrer
                       </button>
                     )}
 
                     {step === 3 && (
-                      <button
-                        type="button"
-                        onClick={handleAnnuler}
-                        className="primary-button"
-                      >
+                      <button type="button" onClick={handleAnnuler} className="primary-button">
                         Nouvelle Allocation
                       </button>
                     )}
@@ -485,34 +451,39 @@ const AllocationTouristiquePage = () => {
               )}
             </div>
           </div>
-
-          {/* Sidebar */}
-          <div className="sidebar">
-            {/* Taux de change */}
+             {/*sidebar*/}
+             <div className="sidebar">
             <div className="exchange-rates-card">
               <h3 className="sidebar-title">Taux de Change</h3>
               <div className="exchange-rates-list">
-                {tauxDeChange.map((taux, index) => (
-                  <div key={index} className="exchange-rate-item">
-                    <div className="currency-info">
-                      <div className="currency-symbol">{taux.devise.charAt(0)}</div>
-                      <div>
-                        <p className="currency-name">{taux.devise}</p>
-                        <p className="currency-base">Dinar Algérien</p>
+                {loadingTaux ? (
+                  <p>Chargement des taux...</p>
+                ) : errorTaux ? (
+                  <p>Erreur lors du chargement des taux: {errorTaux}</p>
+                ) : (
+                  tauxDeChangeData
+                    .slice(0, 3) // Sélection des trois premiers éléments
+                    .map((taux) => (
+                      <div key={taux.code} className="exchange-rate-item">
+                        <div className="currency-info">
+                          <div className="currency-symbol">{taux.code.charAt(0)}</div>
+                          <div>
+                            <p className="currency-name">{taux.nom} ({taux.code})</p>
+                            <p className="currency-base">Dinar Algérien</p>
+                          </div>
+                        </div>
+                        <div className="rate-info">
+                        <p className="rate-value">{taux.tauxVente}</p>
+                        {/*<p className="rate-type">Vente</p>*/}
                       </div>
                     </div>
-                    <div className="rate-info">
-                      <p className="rate-value">{taux.vente}</p>
-                      <p className="rate-type">Vente</p>
-                    </div>
+                  )))}
                   </div>
-                ))}
-              </div>
               <hr/>
               <div className="view-all-rates">
-                <a href="#" className="view-all-link">
+                <Link to="/cotation"className="view-all-link">
                   Voir tous les taux <ChevronRight size={16} />
-                </a>
+                </Link>
               </div>
             </div>
 

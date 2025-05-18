@@ -1,37 +1,41 @@
-import React from 'react';
+/*import React from 'react';
 import AllocationTouristiquePage from './components/AllocationTouristiquePage';
 import FraisDeMissionPage from './components/FraisDeMissionPage';
 import SoinsPage from './components/SoinsPage';
 import './App.css';
-
+import  CotationPage from './CotationPage.js';
 
 function App() {
   return (
     <div className="App">
-      <AllocationTouristiquePage />
+      <CotationPage/>
     </div>
   );
 }
 
-export default App;
+export default App;*/
 
-/*import React from "react";
+import React from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import HeroSection from "./HeroSection";
-/*import About from "./About";
+//import About from "./About";
 import Services from "./Services";
 import Footer from "./Footer";
 
 import AllocationTouristiquePage from "./components/AllocationTouristiquePage";
 import ReglementationPage from "./ReglementationPage";
 import EncaissementPage from "./EncaissementPage";
+import CotationPage from "./CotationPage";
+import FraisDeMissionPage from "./components/FraisDeMissionPage";
+import SoinsPage from "./components/SoinsPage";
+
 import { EncaissementProvider } from "./EncaissementContext";  // Importer le Provider
 
 import "./App.css";
 
 function App() {
   return (
-    <EncaissementProvider>  {/* Encapsuler l'application avec le Provider 
+    <EncaissementProvider>  
       <HashRouter>
         <Routes>
           <Route 
@@ -55,6 +59,11 @@ function App() {
           <Route path="/reglementation" element={<ReglementationPage/>} />
           <Route path="/encaissement" element={<EncaissementPage/>} />
           <Route path="/services" element={<Services/>} />
+        
+          <Route path="/cotation" element={<CotationPage/>} />
+          <Route path="/missions" element={<FraisDeMissionPage/>} />
+          <Route path="/soins" element={<SoinsPage/>} />
+
 
         </Routes>
       </HashRouter>
@@ -62,4 +71,4 @@ function App() {
   );
 }
 
-export default App;*/
+export default App;
