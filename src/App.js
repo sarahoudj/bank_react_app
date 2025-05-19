@@ -28,7 +28,7 @@ import EncaissementPage from "./EncaissementPage";
 import CotationPage from "./CotationPage";
 import FraisDeMissionPage from "./components/FraisDeMissionPage";
 import SoinsPage from "./components/SoinsPage";
-
+import ConsultPage from './ConsultPage';
 import { EncaissementProvider } from "./EncaissementContext";  // Importer le Provider
 
 import "./App.css";
@@ -63,6 +63,7 @@ function App() {
           <Route path="/cotation" element={<CotationPage/>} />
           <Route path="/missions" element={<FraisDeMissionPage/>} />
           <Route path="/soins" element={<SoinsPage/>} />
+          <Route path="/consult" element={<ConsultPage />} />
 
 
         </Routes>

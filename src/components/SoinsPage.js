@@ -1,5 +1,6 @@
 import React, { useState , useEffect} from 'react';
 import { Bell, User, Menu, DollarSign, CreditCard, Calendar, ChevronRight, CheckCircle, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import './SoinsPage.css'; // Importez le fichier CSS
 
 const SoinsPage = () => {
@@ -629,27 +630,34 @@ useEffect(() => {
             <div className="exchange-rates-card">
               <h3 className="sidebar-title">Taux de Change</h3>
               <div className="exchange-rates-list">
-                {tauxDeChange.map((taux, index) => (
-                  <div key={index} className="exchange-rate-item">
-                    <div className="currency-info">
-                      <div className="currency-symbol">{taux.devise.charAt(0)}</div>
-                      <div>
-                        <p className="currency-name">{taux.devise}</p>
-                        <p className="currency-base">Dinar Algérien</p>
+                {loadingTaux ? (
+                  <p>Chargement des taux...</p>
+                ) : errorTaux ? (
+                  <p>Erreur lors du chargement des taux: {errorTaux}</p>
+                ) : (
+                  tauxDeChangeData
+                    .slice(0, 3) // Sélection des trois premiers éléments
+                    .map((taux) => (
+                      <div key={taux.code} className="exchange-rate-item">
+                        <div className="currency-info">
+                          <div className="currency-symbol">{taux.code.charAt(0)}</div>
+                          <div>
+                            <p className="currency-name">{taux.nom} ({taux.code})</p>
+                            <p className="currency-base">Dinar Algérien</p>
+                          </div>
+                        </div>
+                        <div className="rate-info">
+                        <p className="rate-value">{taux.tauxVente}</p>
+                        {/*<p className="rate-type">Vente</p>*/}
                       </div>
                     </div>
-                    <div className="rate-info">
-                      <p className="rate-value">{taux.vente}</p>
-                      <p className="rate-type">Vente</p>
-                    </div>
+                  )))}
                   </div>
-                ))}
-              </div>
               <hr/>
               <div className="view-all-rates">
-                <a href="#" className="view-all-link">
+                <Link to="/cotation"className="view-all-link">
                   Voir tous les taux <ChevronRight size={16} />
-                </a>
+                </Link>
               </div>
             </div>
 

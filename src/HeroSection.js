@@ -32,6 +32,7 @@ const HeroSection = () => {
         < li><Link to="/encaissement"> l'encaissement</Link></li>
       
         < li><Link to="/cotation"> Cotation</Link></li>
+        <li><Link to="/consult">Consultation Transactions</Link></li>
       
       </ul> 
       
