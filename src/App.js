@@ -14,11 +14,11 @@ function App() {
 }
 
 export default App;*/
+// src/App.js
 
 import React from "react";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import HeroSection from "./HeroSection";
-//import About from "./About";
 import Services from "./Services";
 import Footer from "./Footer";
 
@@ -29,46 +29,53 @@ import CotationPage from "./CotationPage";
 import FraisDeMissionPage from "./components/FraisDeMissionPage";
 import SoinsPage from "./components/SoinsPage";
 import ConsultPage from './ConsultPage';
-import { EncaissementProvider } from "./EncaissementContext";  // Importer le Provider
+import LoginPage from './LoginPage'; // <--- Assurez-vous d'importer votre nouvelle LoginPage
+
+// Supprimez ProtectedRoute, AdminUsersPage, AuthProvider, useAuth, etc.
+// si vous ne les utilisez plus.
 
 import "./App.css";
 
 function App() {
+  console.log("App démarrée en mode simple (avec enregistrement/connexion) !");
+
   return (
-    <EncaissementProvider>  
-      <HashRouter>
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              <>
-                <HeroSection />
-               
-                
-                <div id="services">
-                  <Services />
-                </div>
-                <Footer />
-              </>
-            } 
-          />
-          <Route 
-            path="/allocation-touristique" 
-            element={<AllocationTouristiquePage />} 
-          />
-          <Route path="/reglementation" element={<ReglementationPage/>} />
-          <Route path="/encaissement" element={<EncaissementPage/>} />
-          <Route path="/services" element={<Services/>} />
-        
-          <Route path="/cotation" element={<CotationPage/>} />
-          <Route path="/missions" element={<FraisDeMissionPage/>} />
-          <Route path="/soins" element={<SoinsPage/>} />
-          <Route path="/consult" element={<ConsultPage />} />
+    <HashRouter>
+      <Routes>
+        {/* La page de connexion simple est la première affichée */}
+        <Route path="/login" element={<LoginPage />} />
 
+        {/* Page d'accueil */}
+        <Route
+          path="/home"
+          element={
+            <>
+              <HeroSection />
+              <div id="services">
+                <Services />
+              </div>
+              <Footer />
+            </>
+          }
+        />
 
-        </Routes>
-      </HashRouter>
-    </EncaissementProvider>
+        {/* Toutes les autres pages sont directement accessibles */}
+        <Route path="/allocation-touristique" element={<AllocationTouristiquePage />} />
+        <Route path="/reglementation" element={<ReglementationPage />} />
+        <Route path="/encaissement" element={<EncaissementPage />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/cotation" element={<CotationPage />} />
+        <Route path="/missions" element={<FraisDeMissionPage />} />
+        <Route path="/soins" element={<SoinsPage />} />
+        <Route path="/consult" element={<ConsultPage />} />
+
+        {/* Route par défaut: redirige vers /login */}
+        <Route path="/" element={<Navigate to="/login" />} />
+
+        {/* Route 404 (optionnel) */}
+        <Route path="*" element={<div><h1>404 - Page non trouvée</h1><p>Retournez à la <a href="/login">page de connexion</a>.</p></div>} />
+      </Routes>
+    </HashRouter>
   );
 }
 

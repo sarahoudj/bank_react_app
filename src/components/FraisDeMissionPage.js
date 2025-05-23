@@ -42,6 +42,11 @@ const FraisDeMissionPage=() => {
     { devise: 'USD', achat: '127.80 DA', vente: '132.20 DA' },
     { devise: 'GBP', achat: '167.40 DA', vente: '173.20 DA' },
   ];*/
+
+  // --- NOUVEAU: État pour stocker le code_siege de l'utilisateur connecté ---
+    const [loggedInUserCodeSiege, setLoggedInUserCodeSiege] = useState('');
+  // -------------------------------------------------------------------------
+
   const devisesAlgerie = [
     'EUR',
     'USD',
@@ -74,6 +79,20 @@ const FraisDeMissionPage=() => {
     'Ministère de l\'Éducation nationale',
     'Ministère de la Santé, de la Population et de la Réforme hospitalière',
    ];
+
+  // --- NOUVEAU: Récupérer le code_siege de localStorage au montage du composant ---
+  useEffect(() => {
+    const userCodeSiege = localStorage.getItem('loggedInUserCodeSiege');
+    if (userCodeSiege) {
+      setLoggedInUserCodeSiege(userCodeSiege);
+    } else {
+      // Gérer le cas où le code siège n'est pas trouvé (ex: rediriger vers la page de login)
+      console.warn("Code Siège non trouvé dans localStorage. L'utilisateur devrait se connecter.");
+      // Optionnel:setMessage('Veuillez vous connecter pour enregistrer des transactions.'); setIsError(true);
+    }
+  }, []);
+  
+
    useEffect(() => {
     const fetchTauxDeChange = async () => {
       setLoadingTaux(true);
@@ -162,6 +181,7 @@ const FraisDeMissionPage=() => {
             commission,
             totalEnDinars,
             date,
+            code_siege: loggedInUserCodeSiege, // --- NOUVEAU: Ajout du code_siege ici ---
           }),
         });
   

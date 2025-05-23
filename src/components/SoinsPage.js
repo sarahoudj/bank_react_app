@@ -34,7 +34,8 @@ const SoinsPage = () => {
   const [loadingTaux, setLoadingTaux] = useState(true);
   const [errorTaux, setErrorTaux] = useState(null);
 
-
+// --- NOUVEAU: État pour stocker le code_siege de l'utilisateur connecté ---
+  const [loggedInUserCodeSiege, setLoggedInUserCodeSiege] = useState('');
  
   const devisesAlgerie = [
     'EUR',
@@ -66,6 +67,18 @@ const SoinsPage = () => {
     'Japon',
     'Australie',
   ];
+
+  // --- NOUVEAU: Récupérer le code_siege de localStorage au montage du composant ---
+  useEffect(() => {
+    const userCodeSiege = localStorage.getItem('loggedInUserCodeSiege');
+    if (userCodeSiege) {
+      setLoggedInUserCodeSiege(userCodeSiege);
+    } else {
+      // Gérer le cas où le code siège n'est pas trouvé (ex: rediriger vers la page de login)
+      console.warn("Code Siège non trouvé dans localStorage. L'utilisateur devrait se connecter.");
+      // Optionnel:setMessage('Veuillez vous connecter pour enregistrer des transactions.'); setIsError(true);
+    }
+  }, []);
 // Nouveau: Récupérer les taux de change depuis le backend au chargement du composant
 useEffect(() => {
   const fetchTauxDeChange = async () => {
@@ -166,11 +179,13 @@ useEffect(() => {
   // Gérer l'envoi du formulaire à la base de données
   const handleEnvoyer = async () => {
     if (formIsValid) {
+      const codeSiege = localStorage.getItem('codeSiege'); // Récupérer le code siège
       try {
         const response = await fetch('http://localhost:5000/api/soins', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            
           },
           body: JSON.stringify({
             nom,
@@ -189,6 +204,7 @@ useEffect(() => {
             coursVenteDinars,
             commission,
             totalEnDinars,
+             code_siege: loggedInUserCodeSiege, // --- NOUVEAU: Ajout du code_siege ici ---
           }),
         });
   
