@@ -303,3 +303,35 @@
   .notification-close-button:hover {
     background-color: rgba(0, 0, 0, 0.1);
   }
+
+.report-button {
+    background-color: #28a745; /* Couleur verte */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+    margin-right: 10px; /* Espace entre les boutons */
+}
+
+.report-button:hover {
+    background-color: #218838; /* Vert plus foncé au survol */
+}
+
+.report-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+.transaction-actions {
+    display: flex;
+    justify-content: flex-end; /* Aligner les boutons à droite */
+    align-items: center;
+    padding: 10px;
+    border-top: 1px solid #eee;
+    background-color: #f8f8f8;
+}
