@@ -1,14 +1,39 @@
 /* Styles généraux */
+/* src/components/AllocationTouristiquePage.css (ou votre fichier CSS global) */
+
+/* Global HTML/Body/Root (Assurez-vous que c'est dans un fichier CSS global comme index.css) */
+html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Crucial pour inclure padding et border dans la hauteur/largeur */
+}
+
+/* Navbar (Assurez-vous qu'elle a une hauteur définie, ex: dans Navbar.css) */
+.navbar {
+    height: 60px; /* Exemple de hauteur fixe pour la navbar */
+    flex-shrink: 0; /* Empêche la navbar de rétrécir */
+    /* ... autres styles de la navbar ... */
+}
+
+
+/* --- Conteneur Principal de la Page --- */
 .allocation-page {
-    min-height: 100vh;
+    /* Nouvelle hauteur calculée : 100% de la hauteur de la fenêtre moins la hauteur de la navbar */
+    min-height: calc(100vh - 60px); /* Ajustez 60px si la hauteur de votre navbar est différente */
     background-color: #f9fafb;
     font-family: sans-serif;
     display: flex;
-    flex-direction: column;
-  }
-  
-  /* Notification */
-  .notification-container {
+    flex-direction: column; /* Pour organiser le header, main-content, etc. verticalement */
+    padding: 1rem; /* Padding général pour l'ensemble de la page */
+    max-width: 1200px; /* Centrer la page */
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow: hidden; /* Empêche le scroll global sur cette page */
+}
+
+/* --- Notification --- */
+.notification-container {
     position: fixed;
     top: 1rem;
     right: 1rem;
@@ -22,70 +47,74 @@
     gap: 0.75rem;
     z-index: 50;
     animation: bounce 0.5s ease-in-out;
-  }
-  
-  @keyframes bounce {
+}
+
+@keyframes bounce {
     0%, 100% {
-      transform: translateY(0);
+        transform: translateY(0);
     }
     50% {
-      transform: translateY(-10px);
+        transform: translateY(-10px);
     }
-  }
-  
-  .notification-icon {
+}
+
+.notification-icon {
     flex-shrink: 0;
-  }
-  
-  .notification-text-container {
+}
+
+.notification-text-container {
     flex-grow: 1;
-  }
-  
-  .notification-title {
+}
+
+.notification-title {
     font-weight: bold;
     margin-bottom: 0.25rem;
-  }
-  
-  .notification-subtitle {
+}
+
+.notification-subtitle {
     font-size: 0.875rem;
-  }
-  
-  .notification-close-button {
+}
+
+.notification-close-button {
     background: none;
     border: none;
     color: white;
     cursor: pointer;
     opacity: 0.7;
     transition: opacity 0.15s ease-in-out;
-  }
-  
-  .notification-close-button:hover {
+}
+
+.notification-close-button:hover {
     opacity: 1;
-  }
-  
-  /* Header */
-  .header {
-    background-color: #2c3e50;
+}
+
+/* --- Header (de la page, pas la navbar) --- */
+/* Vous avez deux sections "header", une pour la navbar et une ici.
+   Celle-ci semble être un header interne à la page Allocation.
+   Si c'est un doublon de la navbar, supprimez-le. Sinon, adaptez. */
+/* Les styles ci-dessous proviennent de votre code fourni, mais assurez-vous qu'ils ne sont pas en conflit avec Navbar.css */
+.header { /* Si c'est un header de page interne, pas la navbar */
+    background-color: #2c3e50; /* Cette couleur est typique de la navbar */
     color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .header-container {
+}
+
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 1rem;
     max-width: 1200px;
     margin: 0 auto;
-  }
-  
-  .header-left {
+}
+
+.header-left {
     display: flex;
     align-items: center;
     gap: 1rem;
-  }
-  
-  .menu-button {
+}
+
+.menu-button {
     background: none;
     border: none;
     color: white;
@@ -93,60 +122,60 @@
     border-radius: 0.25rem;
     cursor: pointer;
     transition: background-color 0.15s ease-in-out;
-  }
-  
-  .menu-button:hover {
+}
+
+.menu-button:hover {
     background-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .logo-container {
+}
+
+.logo-container {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-  
-  .logo-icon {
+}
+
+.logo-icon {
     flex-shrink: 0;
-  }
-  
-  .logo-text {
+}
+
+.logo-text {
     font-size: 1.25rem;
     font-weight: bold;
-  }
-  
-  .header-nav {
+}
+
+.header-nav {
     display: none; /* Caché par défaut pour mobile */
-  }
-  
-  @media (min-width: 1024px) {
+}
+
+@media (min-width: 1024px) {
     .header-nav {
-      display: flex;
-      gap: 1.5rem;
+        display: flex;
+        gap: 1.5rem;
     }
-  }
-  
-  .nav-link {
+}
+
+.nav-link {
     padding: 0.5rem 0;
     border-bottom: 2px solid transparent;
     font-weight: medium;
     transition: border-bottom-color 0.15s ease-in-out;
-  }
-  
-  .nav-link:hover {
+}
+
+.nav-link:hover {
     border-bottom-color: white;
-  }
-  
-  .nav-link.active {
+}
+
+.nav-link.active {
     border-bottom-color: white;
-  }
-  
-  .header-right {
+}
+
+.header-right {
     display: flex;
     align-items: center;
     gap: 1rem;
-  }
-  
-  .notification-button {
+}
+
+.notification-button {
     position: relative;
     background: none;
     border: none;
@@ -155,13 +184,13 @@
     border-radius: 0.25rem;
     cursor: pointer;
     transition: background-color 0.15s ease-in-out;
-  }
-  
-  .notification-button:hover {
+}
+
+.notification-button:hover {
     background-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .notification-badge {
+}
+
+.notification-badge {
     position: absolute;
     top: 0;
     right: 0;
@@ -169,15 +198,15 @@
     height: 0.5rem;
     border-radius: 50%;
     background-color: #e74c3c;
-  }
-  
-  .user-info {
+}
+
+.user-info {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-  
-  .user-avatar {
+}
+
+.user-avatar {
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
@@ -185,113 +214,124 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  
-  .user-name {
+}
+
+.user-name {
     display: none; /* Caché par défaut pour mobile */
-  }
-  
-  @media (min-width: 768px) {
+}
+
+@media (min-width: 768px) {
     .user-name {
-      display: inline;
+        display: inline;
     }
-  }
-  
-  /* Mobile menu */
-  .mobile-menu {
+}
+
+/* Mobile menu */
+.mobile-menu {
     background-color: #34495e;
     color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .mobile-menu-container {
+}
+
+.mobile-menu-container {
     padding: 0.5rem 1rem;
-  }
-  
-  .mobile-nav {
+}
+
+.mobile-nav {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-  }
-  
-  .mobile-nav-link {
+}
+
+.mobile-nav-link {
     padding: 0.75rem 1rem;
     border-left: 4px solid transparent;
     font-weight: medium;
     transition: border-left-color 0.15s ease-in-out;
-  }
-  
-  .mobile-nav-link:hover {
+}
+
+.mobile-nav-link:hover {
     border-left-color: white;
-  }
-  
-  .mobile-nav-link.active {
+}
+
+.mobile-nav-link.active {
     border-left-color: white;
-  }
-  
-  /* Main content */
-  .main-content {
-    flex-grow: 1;
-    padding: 1rem;
-    
-  }
-  
-  .main-container {
+}
+
+/* --- Main content --- */
+.main-content {
+    flex-grow: 1; /* Permet au contenu principal de prendre tout l'espace vertical disponible */
+    padding: 0; /* Géré par .allocation-page */
+    display: flex;
+    flex-direction: column; /* Empile le page-header, le tracker et le main-container */
+    overflow: hidden; /* Important: cache tout débordement dans main-content */
+}
+
+.main-container {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-  }
-  
-  @media (min-width: 1024px) {
+    flex-grow: 1; /* Permet à ce conteneur flexible de prendre l'espace disponible */
+    /* Sur desktop, flex-direction: row, cette hauteur sera partagée entre form-section et sidebar */
+    overflow-y: hidden; /* Caché par défaut, les sous-sections gèrent le scroll */
+}
+
+@media (min-width: 1024px) {
     .main-container {
-      flex-direction: row;
+        flex-direction: row; /* Disposition côte à côte sur les grands écrans */
+        height: 100%; /* S'assurer qu'il prend toute la hauteur disponible dans le main-content parent */
     }
-  }
-  
-  .form-section {
-    flex-grow: 1;
-  }
-  
-  /* Page header */
-  .page-header {
-    margin-bottom: 1.5rem;
-  }
-  
-  .page-title {
+}
+
+.form-section {
+    flex-grow: 1; /* Prend l'espace horizontal sur les grands écrans */
+    display: flex;
+    flex-direction: column; /* Organise le contenu du formulaire verticalement */
+    overflow: hidden; /* Cache le débordement de la section du formulaire */
+}
+
+/* --- Page header --- */
+.page-header {
+    margin-bottom: 1rem; /* Réduire la marge */
+    flex-shrink: 0; /* Empêche le header de rétrécir */
+}
+
+.page-title {
     font-size: 1.75rem;
     font-weight: bold;
     color: #374151;
     margin-bottom: 0.5rem;
     text-align: left;
-  }
-  
-  .breadcrumb {
+}
+
+.breadcrumb {
     display: flex;
     align-items: center;
     font-size: 0.875rem;
     color: #6b7280;
-  }
-  
-  .breadcrumb span {
+}
+
+.breadcrumb span {
     display: flex;
     align-items: center;
-  }
-  
-  .breadcrumb-current {
+}
+
+.breadcrumb-current {
     color: #3b82f6;
-  }
-  
-  /* Progress tracker */
-  .progress-tracker {
-    margin-bottom: 2rem;
-  }
-  
-  .progress-line {
+}
+
+/* --- Progress tracker --- */
+.progress-tracker {
+    margin-bottom: 1rem; /* Réduire la marge */
+    flex-shrink: 0; /* Empêche le tracker de rétrécir */
+}
+
+.progress-line {
     display: flex;
     align-items: center;
-  }
-  
-  .progress-step {
+}
+
+.progress-step {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -301,144 +341,149 @@
     background-color: #e5e7eb;
     color: #4b5563;
     font-weight: bold;
-  }
-  
-  .progress-step.active {
+    flex-shrink: 0; /* Empêche les étapes de rétrécir */
+}
+
+.progress-step.active {
     background-color: #3b82f6;
     color: white;
-  }
-  
-  .progress-step-line {
+}
+
+.progress-step-line {
     flex-grow: 1;
     height: 0.25rem;
     background-color: #e5e7eb;
     margin: 0 0.5rem;
-  }
-  
-  .progress-step-line.active {
+}
+
+.progress-step-line.active {
     background-color: #3b82f6;
-  }
-  
-  .progress-labels {
+}
+
+.progress-labels {
     display: flex;
     justify-content: space-between;
     margin-top: 0.5rem;
     font-size: 0.75rem;
     color: #6b7280;
-  }
-  
-  .progress-label {
+}
+
+.progress-label {
     text-align: center;
     width: 6rem;
-  }
-  
-  /* Form card */
-  .form-card {
+}
+
+/* --- Form card --- */
+.form-card {
     background-color: white;
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
     padding: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .form-step {
+    flex-grow: 1; /* Permet à la carte de prendre l'espace restant dans .form-section */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Empêche le débordement de la carte, le scroll est géré par un enfant si besoin */
+}
+
+.form-step {
     opacity: 1;
     transition: opacity 0.2s ease-in-out;
-  }
-  
-  .form-step.disabled {
+    flex-grow: 1; /* Permet à l'étape du formulaire de prendre l'espace */
+    display: flex;
+    flex-direction: column;
+    /* Si le contenu des champs du formulaire est très long, c'est ici qu'on gère le scroll */
+    overflow-y: auto; /* Rend le contenu du formulaire scrollable si trop long */
+    padding-right: 10px; /* Pour éviter que la scrollbar ne cache le contenu */
+}
+
+.form-step.disabled {
     opacity: 0.7;
     pointer-events: none;
-  }
-  
-  .form-section-title {
+}
+
+.form-section-title {
     font-size: 1.25rem;
     font-weight: bold;
     color: #2c3e50;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; /* Réduire la marge */
     display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-  
-  .form-section-icon {
+    flex-shrink: 0; /* Empêche le titre de rétrécir */
+}
+
+.form-section-icon {
     flex-shrink: 0;
     color: #3b82f6;
-  }
-  
-  .form-grid {
+}
+
+.form-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  @media (min-width: 768px) {
+    gap: 1rem; /* Réduire le gap */
+    margin-bottom: 1rem; /* Réduire la marge */
+    flex-shrink: 0; /* Empêche la grille de rétrécir, mais le contenu interne peut scroll */
+}
+
+@media (min-width: 768px) {
     .form-grid {
-      grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
-  }
-  
-  .form-group {
+}
+
+.form-group {
     display: flex;
     flex-direction: column;
-    padding-right:1rem;
-  }
-  
-  .form-group.col-span-2 {
+    /* padding-right:1rem; REMOVED: Peut créer des espaces indésirables et causer des débordements */
+}
+
+.form-group.col-span-2 {
     grid-column: span 2;
-  }
-  
-  .form-label {
+}
+
+.form-label {
     font-size: 0.875rem;
-    color:  #374151;    
+    color: #374151;
     margin-bottom: 0.3rem;
     font-weight: 600;
-    display:block;
+    display: block;
     text-align: left;
-    
-  }
-  
-  .form-input {
+}
+
+.form-input {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.6rem; /* Légèrement réduit */
     border: 1px solid #d1d5db;
     border-radius: 0.375rem;
-    font-size: 1rem;
+    font-size: 0.95rem; /* Légèrement réduit */
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  }
-  
-  .form-input:focus {
+    box-sizing: border-box; /* Assure que padding est inclus dans la largeur */
+}
+
+.form-input:focus {
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
-  }
-  
-  .form-input.readonly {
+}
+
+.form-input.readonly {
     background-color: #f3f4f6;
     color: #2563eb;
     font-weight: medium;
-  }
-  
-  /*.form-icon-right {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6b7280;
-    pointer-events: none;
-  }*/
-  
-  .form-actions {
+}
+
+.form-actions {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-  }
-  
-  .primary-button {
-    background-color:  #3b82f6;
+    margin-top: 1rem; /* Ajouter un peu d'espace avec le formulaire */
+    flex-shrink: 0; /* Empêche les boutons de rétrécir */
+}
+
+.primary-button {
+    background-color: #3b82f6;
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: 0.6rem 1.2rem; /* Légèrement réduit */
     border-radius: 0.375rem;
     font-weight: medium;
     cursor: pointer;
@@ -447,28 +492,31 @@
     align-items: center;
     gap: 0.5rem;
     border-color: #3b82f6;
-  }
-  
-  .primary-button:hover {
+    font-size: 0.9rem; /* Légèrement réduit */
+}
+
+.primary-button:hover {
     background-color: #2563eb;
-  }
-  
-  .secondary-button {
+}
+
+.secondary-button {
     background-color: #6b7280;
     color: white;
-    padding: 0.75rem 1rem;
+    padding: 0.6rem 1rem; /* Légèrement réduit */
     border-radius: 0.375rem;
     font-weight: medium;
     cursor: pointer;
+    margin-top: 50px;
     transition: background-color 0.15s ease-in-out;
-  }
-  
-  .secondary-button:hover {
+    font-size: 0.9rem; /* Légèrement réduit */
+}
+
+.secondary-button:hover {
     background-color: #4b5563;
-  }
-  
-  .confirmation-message {
-    margin-top: 1.5rem;
+}
+
+.confirmation-message {
+    margin-top: 1rem; /* Réduire la marge */
     padding: 1rem;
     background-color: #d1fae5;
     border: 1px solid #a7f3d0;
@@ -476,88 +524,97 @@
     display: flex;
     gap: 1rem;
     align-items: center;
-  }
-  
-  .confirmation-icon-container {
+    flex-shrink: 0; /* Empêche le message de rétrécir */
+}
+
+.confirmation-icon-container {
     flex-shrink: 0;
-  }
-  
-  .confirmation-icon {
+}
+
+.confirmation-icon {
     color: #10b981;
-  }
-  
-  .confirmation-title {
+}
+
+.confirmation-title {
     font-weight: bold;
     color: #10b981;
     margin-bottom: 0.25rem;
-  }
-  
-  .confirmation-subtitle {
+}
+
+.confirmation-subtitle {
     font-size: 0.875rem;
     color: #374151;
-  }
-  
-  /* Sidebar */
-  .sidebar {
+}
+
+/* --- Sidebar --- */
+.sidebar {
     width: 100%;
-  }
-  
-  @media (min-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Espacement entre les cartes de la sidebar */
+    flex-shrink: 0; /* La sidebar ne rétrécit pas plus que son contenu */
+    
+}
+
+@media (min-width: 1024px) {
     .sidebar {
-      width: 25%;
+        width: 25%; /* Largeur définie pour la sidebar sur les grands écrans */
+       
     }
-  }
-  
-  .sidebar-title {
+}
+
+.sidebar-title {
     font-size: 1.125rem;
     font-weight: bold;
     color: #374151;
     margin-bottom: 1rem;
-  }
-  
-  .sidebar-title.inverted {
+    flex-shrink: 0; /* Empêche le titre de rétrécir */
+}
+
+.sidebar-title.inverted {
     color: white;
-  }
-  
-  /* Exchange rates card */
-  .exchange-rates-card {
+}
+
+/* --- Exchange rates card --- */
+.exchange-rates-card {
     background-color: white;
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
-    padding:1rem;
-    margin-bottom: 1.5rem;
+    padding: 1rem;
+    flex-shrink: 0; /* La carte ne rétrécit pas */
     
-  }
-  .view-all-link{
+}
+
+.view-all-link {
     text-decoration: none;
-  }
-  
-  .exchange-rates-list {
+}
+
+.exchange-rates-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-  }
-  
-  .exchange-rate-item {
+}
+
+.exchange-rate-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem;
     border-radius: 0.375rem;
     transition: background-color 0.15s ease-in-out;
-  }
-  
-  .exchange-rate-item:hover {
+}
+
+.exchange-rate-item:hover {
     background-color: #f7fafc;
-  }
-  
-  .currency-info {
+}
+
+.currency-info {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-  }
-  
-  .currency-symbol {
+}
+
+.currency-symbol {
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
@@ -567,31 +624,33 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  
-  .currency-name {
+}
+
+.currency-name {
     font-weight: medium;
     color: #374151;
-  }
-  
-  .currency-base {
+}
+
+.currency-base {
     font-size: 0.75rem;
     color: #6b7280;
-  }
-  
-  .rate-info {
+}
+
+.rate-info {
     text-align: right;
-  }
-  
-  .rate-value {
-    font-size: 0;
-  }
-  hr{
-    border:none;
-    height:0.01rem;
-    background-color:#b2b6bb;
-  }
-  /* Info card */
+}
+
+.rate-value {
+    font-size: 0; /* Cela rend le texte invisible, est-ce intentionnel ? */
+}
+
+hr {
+    border: none;
+    height: 0.01rem;
+    background-color: #b2b6bb;
+}
+
+/* --- Info card --- */
 .info-card {
     background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     border-radius: 0.5rem;
@@ -600,34 +659,20 @@
     color: white;
     text-align: left;
     line-height: 1.5rem;
-  
-  }
-  
-  .info-title {
+    flex-shrink: 0; /* La carte ne rétrécit pas */
+}
+
+.info-title {
     font-size: 1.125rem;
     font-weight: 600;
     margin-bottom: 0.75rem;
-  }
-  
-  /*.info-card-text {
-    font-size: 0.875rem;
-    opacity: 0.9;
+}
+
+.info-list {
     margin-bottom: 1rem;
-  }*/
-  
-  .info-list {
-    margin-bottom: 1rem;
-  }
-  
-  /*.info-list-item {
-    font-size: 0.875rem;
-    display: flex;
-    align-items:center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-  }*/
-  
-  .info-button {
+}
+
+.info-button {
     background-color: white;
     color: #1e40af;
     width: 100%;
@@ -636,11 +681,10 @@
     font-weight: 700;
     margin-top: 1rem;
     transition: background-color 0.3s;
-    border: none; 
+    border: none;
     cursor: pointer;
-  }
-  
-  .info-button:hover {
-    background-color:#f9fafb;
-  }
-  
+}
+
+.info-button:hover {
+    background-color: #f9fafb;
+}

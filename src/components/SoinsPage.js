@@ -76,7 +76,7 @@ const SoinsPage = () => {
     } else {
       // Gérer le cas où le code siège n'est pas trouvé (ex: rediriger vers la page de login)
       console.warn("Code Siège non trouvé dans localStorage. L'utilisateur devrait se connecter.");
-      // Optionnel:setMessage('Veuillez vous connecter pour enregistrer des transactions.'); setIsError(true);
+      
     }
   }, []);
 // Nouveau: Récupérer les taux de change depuis le backend au chargement du composant
@@ -220,12 +220,12 @@ useEffect(() => {
         } else {
           // Gérer les erreurs de la requête (afficher un message d'erreur à l'utilisateur)
           console.error('Erreur lors de l\'envoi des données:', response.status);
-          // Vous pourriez mettre à jour un état d'erreur pour afficher un message à l'utilisateur
+          
         }
       } catch (error) {
         // Gérer les erreurs de connexion ou autres
         console.error('Erreur de connexion ou autre:', error);
-        // Vous pourriez mettre à jour un état d'erreur pour afficher un message à l'utilisateur
+        
       }
     } else {
       // Gérer le cas où le formulaire n'est pas valide (bien que cela devrait être géré par la validation précédente)
@@ -467,7 +467,7 @@ useEffect(() => {
                       value={paysDestination}
                       onChange={(e) => setPaysDestination(e.target.value)}
                       className="form-input"
-                      placeholder="entre le pays"
+                      placeholder="entrez le pays"
                       disabled={step !== 1}
                       required
                     />

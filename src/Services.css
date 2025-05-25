@@ -1,167 +1,152 @@
-/* Conteneur principal */
-.services-container {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: 20px;
-    padding: 40px;
-    align-items: center;
+
+.services {
+    padding: 50px 20px; /* Adaptez le padding général de la section */
+    background-color: #f9fafb; /* Couleur de fond légère pour la section */
+    font-family: sans-serif;
+    text-align: center; /* Centrer les titres et le contenu */
+    min-height: fit-content;
 }
 
-/* Style des boîtes */
-.service-box {
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-in-out;
-    width: 100%;
-}
-
-/* La grande image */
-.large-box {
-    height: 100%;
-}
-
-/* Les deux images à droite */
-.small-boxes {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.small-box {
-    height: 50%;
-}
-
-/* Images */
-.service-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* Texte superposé */
-.text-overlay {
-    position: absolute;
-    bottom: 10px;
-    left: 0;
-    width: 100%;
-    color: white;
-    font-size: 1rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    background: rgba(0, 0, 0, 0.6);
-    padding: 10px;
-    text-align: center;
-    border-radius: 5px;
-}
-
-/* Animation au survol */
-.service-box:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-/* Icône cliquable */
-.icon-button {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 8px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.3s ease-in-out;
-    cursor: pointer;
-}
-
-.icon-button:hover {
-    background: rgba(255, 255, 255, 1);
-}
-
-.icon-button img {
-    width: 20px;
-    height: 20px;
-}
-/* Styles pour le titre et le sous-titre */
 .services-header {
-    text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 40px; /* Espace sous l'en-tête de la section */
 }
 
-.services-header h2 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    position: relative;
-    display: inline-block;
-}
-
-.services-header h2 span {
-    color: #1c3d5a;
-    font-weight: 700;
-    position: relative;
-}
-
-/* Soulignement de "SERVICES" */
-.services-header h2 span::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -5px;
-    width: 100%;
-    height: 3px;
-    background-color: #1c3d5a;
-}
-
-/* Sous-titre */
-.services-header p {
-    font-size: 1.2rem;
-    color: #666;
-}
-/* Animation fade-in avec slide-up */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Appliquer l'animation aux titres et sous-titres */
 .section-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    text-align: center;
-    opacity: 0;
-    animation: fadeInUp 1s ease-out forwards;
+    font-size: 2.5em; /* Grande taille de titre */
+    color: #2c3e50; /* Couleur foncée pour le titre */
+    margin-bottom: 10px;
+    font-weight: 700; /* Gras */
+}
+
+.section-title span {
+    color: #3498db; /* Couleur différente pour le span "options" */
 }
 
 .section-subtitle {
-    font-size: 1.2rem;
-    color: #666;
-    text-align: center;
-    margin-bottom: 40px;
-    opacity: 0;
-    animation: fadeInUp 1s ease-out forwards;
-    animation-delay: 0.5s; /* Délai pour un effet plus fluide */
+    font-size: 1.2em;
+    color: #7f8c8d; /* Couleur plus douce pour le sous-titre */
+    margin-bottom: 0;
 }
-@keyframes zoomIn {
-    from {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
+
+.services-container {
+    display: flex;
+    flex-direction: column; /* Par défaut en colonne pour mobile */
+    gap: 30px; /* Espace entre les boîtes de service */
+    max-width: 1200px; /* Largeur maximale pour le conteneur */
+    margin: 0 auto; /* Centrer le conteneur */
+}
+
+@media (min-width: 768px) {
+    .services-container {
+        flex-direction: row; /* En ligne pour les écrans plus larges */
+        align-items: flex-start; /* Aligne les éléments en haut */
     }
 }
 
-/* Appliquer l'effet sur les images */
+.service-box {
+    position: relative;
+    overflow: hidden; /* Cache tout débordement de l'image ou du texte */
+    border-radius: 10px; /* Bords arrondis */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Ombre douce */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transitions fluides */
+    display: flex;
+    flex-direction: column; /* Le contenu de la boîte est en colonne */
+    justify-content: flex-end; /* Aligne le contenu vers le bas */
+}
+
+.service-box:hover {
+    transform: translateY(-5px); /* Léger soulèvement au survol */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Ombre plus prononcée */
+}
+
 .service-box img {
-    animation: zoomIn 1s ease-out forwards;
+    width: 100%;
+    height: 100%; /* Prend toute la hauteur de la boîte */
+    object-fit: cover; /* Recouvre la boîte sans déformer l'image */
+    display: block;
+    transition: transform 0.5s ease; /* Transition pour le zoom de l'image */
+}
+
+.service-box:hover img {
+    transform: scale(1.05); /* Léger zoom sur l'image au survol */
+}
+
+.service-box.large-box {
+    flex: 2; /* Prend plus de place que les petites boîtes sur desktop */
+    min-height: 400px; /* Hauteur minimale pour la grande boîte */
+}
+
+.small-boxes {
+    flex: 1; /* Prend l'espace restant pour les petites boîtes */
+    display: flex;
+    flex-direction: column; /* Empile les petites boîtes verticalement */
+    gap: 30px; /* Espace entre les petites boîtes */
+}
+
+.service-box.small-box {
+    flex: 1; /* Chaque petite boîte prend la moitié de l'espace vertical disponible */
+    min-height: 185px; /* Hauteur minimale pour les petites boîtes (environ la moitié de la grande boîte moins le gap) */
+}
+
+/* Texte superposé sur l'image */
+.text-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)); /* Dégradé sombre en bas */
+    color: white;
+    text-align: left;
+    transform: translateY(0); /* Commence visible */
+    transition: transform 0.3s ease;
+    box-sizing: border-box; /* Inclut padding dans la largeur/hauteur */
+}
+
+.service-box:hover .text-overlay {
+    /* Vous pouvez faire glisser le texte si vous voulez, par exemple : */
+     transform: translateY(-10px); 
+}
+
+.text-overlay h3 {
+    font-size: 1.5em;
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.text-overlay p {
+    font-size: 0.9em;
+    line-height: 1.4;
+    opacity: 0.9;
+}
+
+/* Bouton icône (image "mg.jpg") */
+.icon-button {
+    position: absolute;
+    bottom: 20px; /* Position en bas */
+    right: 20px; /* Position à droite */
+    background-color: rgba(255, 255, 255, 0.9); /* Fond légèrement transparent */
+    border-radius: 50%; /* Bouton rond */
+    width: 50px; /* Largeur */
+    height: 50px; /* Hauteur */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 2; /* S'assure qu'il est au-dessus de l'overlay */
+}
+
+.icon-button:hover {
+    background-color: #3498db; /* Change de couleur au survol */
+    transform: scale(1.1); /* Léger agrandissement */
+}
+
+.icon-button img {
+    width: 24px; /* Taille de l'icône dans le bouton */
+    height: 24px;
+    filter: invert(1); /* Rend l'icône blanche si elle est noire sur fond blanc */
+    /* Ou si c'est un bouton "voir plus", il peut être noir */
+    filter: none; /* Désactive le filtre invert si vous voulez la couleur originale */
 }

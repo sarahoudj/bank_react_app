@@ -135,7 +135,7 @@
   }
   
   .transaction-type.allocation-touristique { background-color: #28a745; } /* Vert */
-  .transaction-type.frais-de-missions { background-color: #ffc107; color: #333; } /* Jaune */
+  .transaction-type.frais-de-missions { background-color: #17a2b8; } /* Jaune */
   .transaction-type.soins { background-color: #17a2b8; } /* Bleu Cyan */
   
   .transaction-date {

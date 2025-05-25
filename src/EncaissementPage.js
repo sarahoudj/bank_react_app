@@ -48,7 +48,7 @@ const EncaissementPage = () => {
             }
             const data = await response.json();
 
-            // S'assurer que toutes les 12 devises sont représentées, même si le backend n'a pas d'entrées pour elles
+            
             const fullData = devises.map(d => {
                 const existing = data.find(item => item.devise === d);
                 return existing || {
@@ -80,7 +80,7 @@ const EncaissementPage = () => {
     return (
         <div className="encaissement-page-container">
             <h1 className="encaissement-page-title">
-                <DollarSign size={28} /> Encaissement Quotidien
+                 Mouvement D'encaisse
             </h1>
             <p className="encaissement-code-siege">
                 Code Siège actuel: <strong>{loggedInUserCodeSiege || 'Non défini'}</strong>

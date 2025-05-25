@@ -17,7 +17,7 @@ export default App;*/
 // src/App.js
 
 import React from "react";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate ,useLocation } from "react-router-dom";
 import HeroSection from "./HeroSection";
 import Services from "./Services";
 import Footer from "./Footer";
@@ -29,52 +29,64 @@ import CotationPage from "./CotationPage";
 import FraisDeMissionPage from "./components/FraisDeMissionPage";
 import SoinsPage from "./components/SoinsPage";
 import ConsultPage from './ConsultPage';
-import LoginPage from './LoginPage'; // <--- Assurez-vous d'importer votre nouvelle LoginPage
+import LoginPage from './LoginPage'; 
 
-// Supprimez ProtectedRoute, AdminUsersPage, AuthProvider, useAuth, etc.
-// si vous ne les utilisez plus.
-
-import "./App.css";
-
-function App() {
-  console.log("App démarrée en mode simple (avec enregistrement/connexion) !");
+function AppContent() {
+  const location = useLocation(); 
+  const showNavbar = location.pathname !== '/login'; 
 
   return (
+    <>
+      {showNavbar && <HeroSection />} 
+      
+      
+      <main className="app-main-content"> 
+        <Routes>
+          {/* Public route for login */}
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* Protected/App routes */}
+          <Route
+            path="/home"
+            element={
+              <>
+               
+                {/* The Services section (identified by its ID for hash linking) */}
+                <div id="home-services-section">
+                  <Services />
+                </div>
+                
+              </>
+            }
+          />
+
+          {/* All other specific application pages */}
+          <Route path="/allocation-touristique" element={<AllocationTouristiquePage />} />
+          <Route path="/reglementation" element={<ReglementationPage />} />
+          <Route path="/encaissement" element={<EncaissementPage />} />
+          <Route path="/services" element={<Services />} /> {/* If Services can be a standalone page */}
+          <Route path="/cotation" element={<CotationPage />} />
+          <Route path="/missions" element={<FraisDeMissionPage />} />
+          <Route path="/soins" element={<SoinsPage />} />
+          <Route path="/consult" element={<ConsultPage />} />
+          
+          {/* Default route: redirects to /login if no other path matches */}
+          <Route path="/" element={<Navigate to="/login" />} />
+
+          {/* 404 Route */}
+          <Route path="*" element={<div><h1>404 - Page not found</h1><p>Return to the <a href="/login">login page</a>.</p></div>} />
+        </Routes>
+      </main>
+    </>
+  );
+}
+
+
+function App() {
+  console.log("App started with global navigation (excluding login)!");
+  return (
     <HashRouter>
-      <Routes>
-        {/* La page de connexion simple est la première affichée */}
-        <Route path="/login" element={<LoginPage />} />
-
-        {/* Page d'accueil */}
-        <Route
-          path="/home"
-          element={
-            <>
-              <HeroSection />
-              <div id="services">
-                <Services />
-              </div>
-              <Footer />
-            </>
-          }
-        />
-
-        {/* Toutes les autres pages sont directement accessibles */}
-        <Route path="/allocation-touristique" element={<AllocationTouristiquePage />} />
-        <Route path="/reglementation" element={<ReglementationPage />} />
-        <Route path="/encaissement" element={<EncaissementPage />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/cotation" element={<CotationPage />} />
-        <Route path="/missions" element={<FraisDeMissionPage />} />
-        <Route path="/soins" element={<SoinsPage />} />
-        <Route path="/consult" element={<ConsultPage />} />
-
-        {/* Route par défaut: redirige vers /login */}
-        <Route path="/" element={<Navigate to="/login" />} />
-
-        {/* Route 404 (optionnel) */}
-        <Route path="*" element={<div><h1>404 - Page non trouvée</h1><p>Retournez à la <a href="/login">page de connexion</a>.</p></div>} />
-      </Routes>
+      <AppContent /> {/* Render the conditional content wrapper */}
     </HashRouter>
   );
 }

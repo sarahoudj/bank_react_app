@@ -8,7 +8,7 @@ const Services = () => {
       {/* Titre et sous-titre */}
       <div className="services-header">
         <h2 className="section-title"> <span>options</span></h2>
-        <p className="section-subtitle">Welcome to [website name], your one-stop destination</p>
+        <p className="section-subtitle">L'operationel de change </p>
       </div>
 
       <div className="services-container">
@@ -17,7 +17,7 @@ const Services = () => {
           <img src="imag3.jpg" alt="Allocation touristique" />
           <div className="text-overlay">
             <h3>Allocation Touristique</h3>
-            <p>Planifiez vos voyages avec sérénité.</p>
+            <p></p>
           </div>
           <Link to="/allocation-touristique" className="icon-button">
             <img src="mg.jpg" alt="Voir plus" />
@@ -31,7 +31,7 @@ const Services = () => {
             <img src="imag1.jpg" alt="Soins à l'étranger" />
             <div className="text-overlay">
               <h3>Soins à l'étranger</h3>
-              <p>Bénéficiez des meilleurs traitements.</p>
+              <p></p>
             </div>
             <Link to="/soins" className="icon-button">
             <img src="mg.jpg" alt="Voir plus" />
@@ -43,7 +43,7 @@ const Services = () => {
             <img src="imag2.jpg" alt="Missions à l'étranger" />
             <div className="text-overlay">
               <h3>Missions à l'étranger</h3>
-              <p>Accomplissez vos objectifs à l'international.</p>
+              <p></p>
             </div>
             <Link to="/missions" className="icon-button">
             <img src="mg.jpg" alt="Voir plus" />

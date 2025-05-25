@@ -143,7 +143,7 @@ const ConsultPage = () => {
   };
 // --- NOUVELLE FONCTION POUR GÉNÉRER LE RAPPORT ---
   const handleGenerateReport = async (transactionId, transactionType) => {
-    // Adapter le type de transaction pour correspondre aux noms de la route API backend
+    
     let typeForBackend = '';
     switch (transactionType) {
       case 'Allocation Touristique':

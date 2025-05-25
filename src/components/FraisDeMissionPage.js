@@ -404,7 +404,7 @@ const FraisDeMissionPage=() => {
                       value={nationalite}
                       onChange={(e) => setNationalite(e.target.value)}
                       className="form-input"
-                      placeholder=""
+                      placeholder="entrez votre nationalité"
                       disabled={step !== 1}
                       required
                     />
@@ -413,11 +413,11 @@ const FraisDeMissionPage=() => {
                   <div className="form-group">
                     <label className="form-label">Pays DE Destination</label>
                     <input
-                      type="email"
+                      type="text"
                       value={paysDestination}
                       onChange={(e) => setPaysDestination(e.target.value)}
                       className="form-input"
-                      placeholder="email@exemple.com"
+                      placeholder="entrez  le pays"
                       disabled={step !== 1}
                       required
                     />
